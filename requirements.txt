@@ -1,0 +1,11 @@
+numpy 
+pandas 
+opencv-python
+matplotlib
+seaborn
+tensorflow<2.11
+keras<2.11
+pyarrow
+fastapi
+uvicorn
+sqlalchemy
