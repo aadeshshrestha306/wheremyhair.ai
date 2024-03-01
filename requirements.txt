@@ -9,3 +9,5 @@ pyarrow
 fastapi
 uvicorn
 sqlalchemy
+python-jose
+passlib
