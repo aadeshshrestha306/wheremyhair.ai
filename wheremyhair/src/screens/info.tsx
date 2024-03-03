@@ -9,24 +9,21 @@ import {
     ScrollView,
 } from 'react-native';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
 import { RootStackParamList } from "../App";
+import Icons from 'react-native-vector-icons/Ionicons';
 
-type profProps = NativeStackScreenProps<RootStackParamList, 'Profile'>
+type infoProps = NativeStackScreenProps<RootStackParamList, 'Info'>
 
-const ProfileView = ( { navigation } : profProps ) => {
+const InfoScreen = ( { navigation } : infoProps ) => {
     return(
         <SafeAreaView style={styles.container}>
             <StatusBar backgroundColor={'#242219'}></StatusBar>
             <View style={styles.header}>
-                <Image
-                    source={require('../assets/images/wheremyhair_logo.png')}
-                    style={styles.logo}></Image>
-                <Text style={styles.text}>wheremyhair.ai</Text>
+                <Text style={styles.text}>"hello world"</Text>
             </View>
+            <Icons name="skull" color={'white'} size={100} style={{alignItems: "center", justifyContent:'center', marginLeft: 'auto', marginRight: 'auto'}}/>
             <ScrollView style={styles.container_2}>
-                <Text style={styles.content}>This is where user profile goes</Text>
+                <Text style={styles.content}>This is where about us is featured</Text>
             </ScrollView>
         </SafeAreaView>
     );
@@ -37,16 +34,13 @@ const styles = StyleSheet.create({
         flex:1, 
         backgroundColor: '#242219',
     },
-    logo:{
-        width: 50,
-        height: 50,
-    },
 
     text:{
         textAlign: 'center',
         fontSize: 20,
         fontFamily : 'Kanit-Bold',
         color: 'rgba(255, 255, 255, 0.8)',
+        marginTop: 20,
     },
 
     header:{
@@ -59,18 +53,18 @@ const styles = StyleSheet.create({
     },
 
     container_2:{
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        backgroundColor: '#242219',
     },
 
     content:{
         textAlign: 'justify',
         fontSize: 14,
         fontFamily: 'Anta-Regular',
-        color: 'rgba(0, 0, 0, 0.9)',
+        color: 'rgba(255, 255, 255, 0.9)',
         margin: 30,
         lineHeight: 22,
     }
 
 })
 
-export default ProfileView;
+export default InfoScreen;

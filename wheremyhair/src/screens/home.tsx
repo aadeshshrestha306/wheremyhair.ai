@@ -7,14 +7,22 @@ import {
     StatusBar,
     StyleSheet,
     ScrollView,
+    TouchableOpacity,
+    Alert
 } from 'react-native';
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { NativeStackScreenProps, createNativeStackNavigator } from "@react-navigation/native-stack";
+import Icons from 'react-native-vector-icons/Ionicons';
 
+import InfoScreen from "./info";
 import { RootStackParamList } from "../App";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-type homeProps = NativeStackScreenProps<RootStackParamList, 'HomeScreen'>
+const Stack = createNativeStackNavigator<RootStackParamList>()
+const Tab = createBottomTabNavigator<RootStackParamList>()
 
-const Home = ( { navigation } : homeProps ) => {
+type homeProps = NativeStackScreenProps<RootStackParamList, 'Home'>
+
+const HomeScreen = ({ navigation }: homeProps) => {
     return(
         <SafeAreaView style={styles.container}>
             <StatusBar backgroundColor={'#242219'}></StatusBar>
@@ -88,4 +96,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default Home;
+export default HomeScreen;
