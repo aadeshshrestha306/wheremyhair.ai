@@ -1,76 +1,77 @@
 import React from "react";
-import {
-    Image,
-    View,
-    Text,
-    SafeAreaView,
-    StatusBar,
-    StyleSheet,
-    ScrollView,
-} from 'react-native';
+import { View, StyleSheet, ActivityIndicator, TouchableOpacity, StatusBar, Text } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Camera, useCameraDevice, useCameraFormat } from "react-native-vision-camera";
+import Icons from 'react-native-vector-icons/Ionicons';
 
 import { RootStackParamList } from "../App";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-type camProps = NativeStackScreenProps<RootStackParamList, 'Camera'>
+type camProps = NativeStackScreenProps<RootStackParamList, "Camera">;
 
-const CameraScreen = ( { navigation } : camProps ) => {
-    return(
-        <SafeAreaView style={styles.container}>
-            <StatusBar backgroundColor={'#242219'}></StatusBar>
-            <View style={styles.header}>
-                <Image
-                    source={require('../assets/images/wheremyhair_logo.png')}
-                    style={styles.logo}></Image>
-                <Text style={styles.text}>wheremyhair.ai</Text>
-            </View>
-            <ScrollView style={styles.container_2}>
-                <Text style={styles.content}>Hello World</Text>
-            </ScrollView>
-        </SafeAreaView>
-    );
+const CameraScreen: React.FC<camProps> = ({ navigation }: camProps) => {
+  const cameraPermission = Camera.getCameraPermissionStatus()
+  const newCameraPermission = Camera.requestCameraPermission()
+
+  const frontCamera = useCameraDevice('front')
+  const format = useCameraFormat( frontCamera, [
+    {videoAspectRatio: 20 / 9},
+    {videoResolution: {width: 1080, height: 2400}},
+    {fps: 60},
+  ])
+
+  if (frontCamera == null) {
+    return <ActivityIndicator style={{flex:1}} size={50} color={'red'} ></ActivityIndicator>;
+  }
+  
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor={'black'}></StatusBar>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={ () => navigation.navigate('Home') }>
+            <Icons name="caret-back" color={'rgba(255, 255, 255, 0.8)'} size={30} style={{marginTop: 30, marginBottom: 10, marginLeft: 5, paddingHorizontal: 20 }} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.cameraContainer}>
+          <Text style={styles.text}>Upper View</Text>
+          <Camera
+            style={styles.camera}
+            device={frontCamera}
+            isActive={true}
+            photo={true}
+          />
+        </View>
+    </SafeAreaView>    
+  );
 };
+  
 
 const styles = StyleSheet.create({
-    container:{
-        flex:1, 
-        backgroundColor: '#242219',
-    },
-    logo:{
-        width: 50,
-        height: 50,
-    },
+  container: {
+    flex: 1,
+    backgroundColor: 'black'
+  },
+  cameraContainer: {
+    flex: 1,
+  },
+  camera: {
+    flex: 1,
+    marginBottom: 150
+  },
 
-    text:{
-        textAlign: 'center',
-        fontSize: 20,
-        fontFamily : 'Kanit-Bold',
-        color: 'rgba(255, 255, 255, 0.8)',
-    },
+  text:{
+    textAlign: 'center',
+    fontSize: 20,
+    fontFamily : 'Kanit-Bold',
+    color: 'rgba(255, 255, 255, 0.8)',
+    justifyContent: 'center',
+    marginTop: 10,
+    marginBottom: 20
+  },
 
-    header:{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 20,
-        marginTop: 40,
-        marginBottom: 10,
-    },
-
-    container_2:{
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    },
-
-    content:{
-        textAlign: 'justify',
-        fontSize: 14,
-        fontFamily: 'Anta-Regular',
-        color: 'rgba(0, 0, 0, 0.9)',
-        margin: 30,
-        lineHeight: 22,
-    }
-
-})
+  header:{
+    backgroundColor: 'black'
+},
+});
 
 export default CameraScreen;

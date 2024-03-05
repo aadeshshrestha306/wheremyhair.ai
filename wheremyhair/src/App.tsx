@@ -9,7 +9,6 @@ import Signup from './screens/signup';
 import HomeScreen from './screens/home';
 import CameraScreen from './screens/camera';
 import ProfileView from './screens/profile';
-import InfoScreen from './screens/info';
 
 export type RootStackParamList = {
   SignupScreen: undefined;
@@ -17,7 +16,6 @@ export type RootStackParamList = {
   Home: undefined;
   Camera: undefined;
   Profile: undefined;
-  Info: undefined;
 };
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -39,7 +37,7 @@ const App = () => {
           options={{
             headerShown: false,
             tabBarIcon: ({ focused }) => (
-              <Icons name={focused ? 'home' : 'home-outline'} color={'rgba(255, 255, 255, 0.9)'} size={26} />
+              <Icons name={focused ? 'home' : 'home-outline'} color={'rgba(255, 255, 255, 0.9)'} size={24} />
             ),
           }}
         />
@@ -48,6 +46,7 @@ const App = () => {
           component={CameraScreen}
           options={{
             headerShown: false,
+            tabBarStyle: {display: 'none'},
             tabBarIcon: ({ focused }) => (
               <Icons name={focused ? 'camera' : 'camera-outline'} color={'rgba(255, 255, 255, 0.9)'} size={30} />
             ),
@@ -59,17 +58,7 @@ const App = () => {
           options={{
             headerShown: false,
             tabBarIcon: ({ focused }) => (
-              <Icons name={focused ? 'person' : 'person-outline'} color={'rgba(255, 255, 255, 0.9)'} size={26} />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name='Info'
-          component={InfoScreen}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({ focused }) => (
-              <Icons name={focused ? 'bulb' : 'bulb-outline'} color={'rgba(255, 255, 255, 0.9)'} size={26} />
+              <Icons name={focused ? 'person' : 'person-outline'} color={'rgba(255, 255, 255, 0.9)'} size={24} />
             ),
           }}
         />
