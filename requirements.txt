@@ -11,3 +11,5 @@ uvicorn
 sqlalchemy
 python-jose
 passlib
+psycopg2
+python-multipart
