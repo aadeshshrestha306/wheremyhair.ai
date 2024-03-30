@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 import models, schemas
 import bcrypt
+from pydantic import EmailStr
 
 
 def hash_password(password: str) -> str:
@@ -22,18 +23,8 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.refresh(db_user)
     return db_user
 
-def update_user(db: Session, user_id: int, user: schemas.UserBase):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if db_user:
-        for attr, value in vars(user).items():
-            if value is not None:
-                setattr(db_user, attr, value)
-        db.commit()
-        db.refresh(db_user)
-    return db_user
-
-def delete_user(db: Session, user_id: int):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+def delete_user(db: Session, user_email: EmailStr):
+    db_user = db.query(models.User).filter(models.User.email == user_email).first()
     if db_user:
         db.delete(db_user)
         db.commit()

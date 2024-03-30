@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -17,10 +17,13 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { RootStackParamList } from '../App';
 
-
 type signupProps = NativeStackScreenProps<RootStackParamList, 'SignupScreen'>
 
-const Signup = ( { navigation }: signupProps) =>  {
+const SignupScreen = ( { navigation }: signupProps) =>  {
+  const [email, setEmail] = useState()
+  const [username, setUsername] = useState()
+  const [password, setPassword] = useState()
+
   return(
     <SafeAreaView style={{flex:1}}>
         <View style={styles.container}>
@@ -32,6 +35,7 @@ const Signup = ( { navigation }: signupProps) =>  {
             <Text style={styles.font}>Email</Text>
             <TextInput 
               style={styles.textfield}
+
               />
             <Text style={styles.font}>Username</Text>
             <TextInput 
@@ -40,16 +44,11 @@ const Signup = ( { navigation }: signupProps) =>  {
             <Text style={styles.font}>Password</Text>
             <TextInput 
               style={styles.textfield}
+              secureTextEntry={true}
               />
-            <Pressable style={styles.button} onPress={ () => Alert.alert("Log in!")}>
+            <Pressable style={styles.button} onPress={ () => Alert.alert("Account Created Successfully!")}>
               <Text style={styles.button_text}>Create Account</Text>
             </Pressable>
-            <TouchableOpacity onPress={ () => navigation.push('LoginScreen')}>
-              <Text style={styles.options}>Already have one? Login</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={ () => Alert.alert("Redirecting")}>
-              <Text style={styles.options}>Click to follow wheremyhair.ai for updates</Text>
-            </TouchableOpacity>
         </View>
     </SafeAreaView>
   );
@@ -94,7 +93,9 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 6,
     height: 48,
-    color:'rgba(255, 255, 255, 0.8)'
+    color:'rgba(255, 255, 255, 0.8)',
+    fontFamily: 'Kanit-Regular',
+    fontSize: 16
   },
 
   button:{
@@ -123,4 +124,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Signup;
+export default SignupScreen;

@@ -18,7 +18,7 @@ import { RootStackParamList } from '../App';
 
 type loginProps = NativeStackScreenProps<RootStackParamList, 'LoginScreen'>
 
-const Login = ( { navigation }: loginProps) =>  {
+const LoginScreen = ( { navigation }: loginProps) =>  {
   return(
     <SafeAreaView style={{flex:1}}>
         <View style={styles.container}>
@@ -30,12 +30,14 @@ const Login = ( { navigation }: loginProps) =>  {
             <Text style={styles.font}>Email</Text>
             <TextInput 
               style={styles.textfield}
+              
               />
             <Text style={styles.font}>Password</Text>
             <TextInput 
               style={styles.textfield}
+              secureTextEntry={true}
               />
-            <Pressable style={styles.button} onPress={ () => navigation.navigate('HomeScreen')}>
+            <Pressable style={styles.button} onPress={ () => navigation.navigate('Main')}>
               <Text style={styles.button_text}>Log In</Text>
             </Pressable>
             <TouchableOpacity onPress={ () => Alert.alert("Redirecting")}>
@@ -88,7 +90,9 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 6,
     height: 48,
-    color:'rgba(255, 255, 255, 0.8)'
+    color:'rgba(255, 255, 255, 0.8)',
+    fontFamily: 'Kanit-Regular',
+    fontSize: 16
   },
 
   button:{
@@ -117,4 +121,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Login;
+export default LoginScreen;
