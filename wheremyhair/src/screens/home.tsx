@@ -25,7 +25,6 @@ type homeProps = NativeStackScreenProps<RootStackParamList, 'Home'>
 const HomeScreen = ({ navigation }: homeProps) => {
     return(
         <SafeAreaView style={styles.container}>
-            <StatusBar backgroundColor={'#242219'}></StatusBar>
             <View style={styles.header}>
                 <Image
                     source={require('../assets/images/wheremyhair_logo.png')}

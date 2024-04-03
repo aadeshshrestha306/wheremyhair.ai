@@ -18,16 +18,7 @@ type profProps = NativeStackScreenProps<RootStackParamList, 'Profile'>
 const ProfileView = ( { navigation } : profProps ) => {
     return(
         <SafeAreaView style={styles.container}>
-            <StatusBar backgroundColor={'#242219'}></StatusBar>
-            <View style={styles.header}>
-                <Image
-                    source={require('../assets/images/wheremyhair_logo.png')}
-                    style={styles.logo}></Image>
-                <Text style={styles.text}>wheremyhair.ai</Text>
-            </View>
-            <ScrollView style={styles.container_2}>
-                <Text style={styles.content}>This is where user profile goes</Text>
-            </ScrollView>
+            
         </SafeAreaView>
     );
 };
