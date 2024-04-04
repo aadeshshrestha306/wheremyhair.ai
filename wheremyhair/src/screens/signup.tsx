@@ -6,23 +6,60 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
   TextInput,
   Alert,
   Pressable,
-  TouchableOpacity
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-
+import axios from 'axios';
 
 import { RootStackParamList } from '../App';
 
 type signupProps = NativeStackScreenProps<RootStackParamList, 'SignupScreen'>
 
 const SignupScreen = ( { navigation }: signupProps) =>  {
-  const [email, setEmail] = useState()
-  const [username, setUsername] = useState()
-  const [password, setPassword] = useState()
+  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+
+  const handleSignUp = async () => {
+    try{
+      const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+      if (!emailPattern.test(email)) {
+        Alert.alert("Invalid Email", "Please enter a valid email address.");
+        return;
+      }  
+
+      const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+
+      if (!passwordPattern.test(password)) {
+        Alert.alert(
+          "Invalid Password",
+          "Password must be between 6 to 20 characters and contain at least one numeric digit, one uppercase and one lowercase letter."
+        );
+        return;
+      }
+
+      const response = await axios.post("http://192.168.1.13:8000/users/", {
+        email: email,
+        username: username,
+        password: password
+      });
+
+      if (response.status == 200){
+        Alert.alert("Created User Successfully");
+        setEmail("");
+        setUsername("");
+        setPassword("");
+      }
+    }
+    catch(error){
+      Alert.alert("An error occured. Please try again!")
+    }
+
+  }
 
   return(
     <SafeAreaView style={{flex:1}}>
@@ -35,18 +72,23 @@ const SignupScreen = ( { navigation }: signupProps) =>  {
             <Text style={styles.font}>Email</Text>
             <TextInput 
               style={styles.textfield}
-
+              value={email}
+              onChangeText={text => setEmail(text)}
               />
             <Text style={styles.font}>Username</Text>
             <TextInput 
               style={styles.textfield}
+              value={username}
+              onChangeText={text => setUsername(text)}
               />
             <Text style={styles.font}>Password</Text>
             <TextInput 
               style={styles.textfield}
               secureTextEntry={true}
+              value={password}
+              onChangeText={text => setPassword(text)}
               />
-            <Pressable style={styles.button} onPress={ () => Alert.alert("Account Created Successfully!")}>
+            <Pressable style={styles.button} onPress={ () => handleSignUp()}>
               <Text style={styles.button_text}>Create Account</Text>
             </Pressable>
         </View>

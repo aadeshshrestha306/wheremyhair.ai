@@ -20,12 +20,20 @@ const CameraScreen: React.FC<camProps> = ({ navigation }: camProps) => {
   const frontCamera = useCameraDevice('front')
 
   const openGallery = async () => {
-    const result = await launchImageLibrary({
-      mediaType: 'photo',
-      quality: 1,
-    });
-    setImgSource(result.assets[0].uri); 
-    console.log(result);
+    try{
+      const result = await launchImageLibrary({
+        mediaType: 'photo',
+        quality: 1,
+      });
+
+      if (!result.didCancel && !result.errorCode) {
+        setImgSource(result.assets[0].uri);
+        console.log(result);
+      } 
+    }
+    catch(error){
+      Alert.alert("Please select an image!")
+    }
   }
 
   const capturePhoto = async () => {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Image,
   SafeAreaView,
@@ -10,15 +10,43 @@ import {
   TextInput,
   Alert,
   Pressable,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import axios from 'axios';
 
 import { RootStackParamList } from '../App';
 
 type loginProps = NativeStackScreenProps<RootStackParamList, 'LoginScreen'>
 
 const LoginScreen = ( { navigation }: loginProps) =>  {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async() => {
+    
+    try{
+      const formdata = new FormData();
+      formdata.append('username', email);
+      formdata.append('password', password);
+
+      const response = await axios.post("http://192.168.1.13:8000/user-login/", {
+        formdata
+      });
+
+      if (response.status == 200){
+        Alert.alert("Login successful");
+        setEmail("");
+        setPassword("");
+      } else{
+        Alert.alert("Login failed", "Please check your email and password")
+      }
+    }
+    catch(error){
+      Alert.alert("An error occured. Please try again!")
+    }
+  }
+
   return(
     <SafeAreaView style={{flex:1}}>
         <View style={styles.container}>
@@ -30,22 +58,33 @@ const LoginScreen = ( { navigation }: loginProps) =>  {
             <Text style={styles.font}>Email</Text>
             <TextInput 
               style={styles.textfield}
-              
+              value={email}
+              onChangeText={text => setEmail(text)}
               />
             <Text style={styles.font}>Password</Text>
             <TextInput 
               style={styles.textfield}
+              value={password}
+              onChangeText={text => setPassword(text)}
               secureTextEntry={true}
               />
-            <Pressable style={styles.button} onPress={ () => navigation.navigate('Main')}>
+            <Pressable style={styles.button} onPress={ () =>handleLogin()}>
               <Text style={styles.button_text}>Log In</Text>
             </Pressable>
             <TouchableOpacity onPress={ () => Alert.alert("Redirecting")}>
               <Text style={styles.options}>Forgot your password?</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={ () => navigation.navigate('SignupScreen')}>
-              <Text style={styles.options}>No Account? Create one!</Text>
-            </TouchableOpacity>
+            <View style={{flexDirection: 'row', justifyContent:'center', marginTop:8}}>
+              <Text style={styles.options_2}>Dont have an account?</Text>
+              <TouchableOpacity onPress={ () => navigation.navigate('SignupScreen')}>
+                <Text 
+                  style={{fontFamily: 'Kanit-Regular',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          alignItems:'center',
+                          textAlign: 'center',
+                          textDecorationLine: 'underline'}}>Create one!</Text>
+              </TouchableOpacity>
+            </View>
         </View>
     </SafeAreaView>
   );
@@ -117,7 +156,15 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.8)',
     alignItems:'center',
     margin: 8,
-    textAlign: 'center'
+    textAlign: 'center',
+  },
+
+  options_2:{
+    fontFamily: 'Kanit-Regular',
+    color: 'rgba(255, 255, 255, 0.8)',
+    alignItems:'center',
+    textAlign: 'center',
+    marginRight:3,
   }
 });
 

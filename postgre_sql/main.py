@@ -6,6 +6,7 @@ import bcrypt
 from sqlalchemy.orm import Session
 from typing import Annotated
 from pydantic import EmailStr
+from fastapi.middleware.cors import CORSMiddleware
 
 import models, schemas, crud
 from database import SessionLocal, engine
@@ -19,6 +20,14 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 def get_db():
     db = SessionLocal()
