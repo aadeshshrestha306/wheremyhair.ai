@@ -8,14 +8,9 @@ import {
     StyleSheet,
     ScrollView,
 } from 'react-native';
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { RootStackParamList } from "../App";
 
-type profProps = NativeStackScreenProps<RootStackParamList, 'Profile'>
-
-const ProfileView = ( { navigation } : profProps ) => {
+const ProfileView = ( { navigation } ) => {
     return(
         <SafeAreaView style={styles.container}>
             

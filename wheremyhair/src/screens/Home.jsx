@@ -4,33 +4,16 @@ import {
     View,
     Text,
     SafeAreaView,
-    StatusBar,
     StyleSheet,
     ScrollView,
-    TouchableOpacity,
-    Alert,
-    Dimensions
 } from 'react-native';
-import { NativeStackScreenProps, createNativeStackNavigator } from "@react-navigation/native-stack";
-import Icons from 'react-native-vector-icons/Ionicons';
 
-import { RootStackParamList } from "../App";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Header from "../components/Header";
 
-const Stack = createNativeStackNavigator<RootStackParamList>()
-const Tab = createBottomTabNavigator<RootStackParamList>()
-
-type homeProps = NativeStackScreenProps<RootStackParamList, 'Home'>
-
-const HomeScreen = ({ navigation }: homeProps) => {
+const HomeScreen = ({ navigation }) => {
     return(
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Image
-                    source={require('../assets/images/wheremyhair_logo.png')}
-                    style={styles.logo}></Image>
-                <Text style={styles.text}>wheremyhair.ai</Text>
-            </View>
+            < Header/>
             <ScrollView style={styles.container_2}>
                 <Text style={styles.header_1}>
                     Norwood-Hamilton Scale
@@ -47,33 +30,10 @@ const HomeScreen = ({ navigation }: homeProps) => {
     );
 };
 
-const screenWidth = Dimensions.get('screen').width;
-const screenHeight = Dimensions.get('screen').height;
-
 const styles = StyleSheet.create({
     container:{
         flex:1, 
         backgroundColor: '#242219',
-    },
-    logo:{
-        width: 50,
-        height: 50,
-    },
-
-    text:{
-        textAlign: 'center',
-        fontSize: 20,
-        fontFamily : 'Kanit-Bold',
-        color: 'rgba(255, 255, 255, 0.8)',
-    },
-
-    header:{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 20,
-        marginTop: 40,
-        marginBottom: 10,
     },
 
     container_2:{
@@ -92,7 +52,6 @@ const styles = StyleSheet.create({
     },
 
     image:{
-        //flex: 1,
         width: 390,
         height: 170,
         resizeMode: 'contain',

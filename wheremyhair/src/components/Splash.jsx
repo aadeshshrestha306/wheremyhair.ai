@@ -2,21 +2,18 @@ import React from 'react';
 import {
   Image,
   SafeAreaView,
-  StatusBar,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
 
-const App = () =>  {
+const Splash = ({navigation}) =>  {
   return(
     <SafeAreaView style={{flex:1}}>
       <View style={styles.container}>
-        <StatusBar backgroundColor={'#242219'}></StatusBar>
         <Image
-        source={require('./src/assets/images/wheremyhair_logo.png')}
-        style={styles.logo}></Image>
+          source={require('../assets/images/wheremyhair_logo.png')}
+          style={styles.logo}></Image>
         <Text style={styles.logo_text}>wheremyhair.ai</Text>
       </View>
     </SafeAreaView>
@@ -45,4 +42,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default Splash;

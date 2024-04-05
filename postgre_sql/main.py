@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 from pydantic import EmailStr
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional
 
 import models, schemas, crud
 from database import SessionLocal, engine
@@ -29,19 +30,14 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+blacklist = set()
+
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
-
-@app.post("/users/", response_model=schemas.User)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email(db, email=user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
 
 
 def hash_password(password: str) -> str:
@@ -69,6 +65,22 @@ def create_access_token(user_email: EmailStr, user_name: str, expires_delta: tim
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+def verify_token(token: str):
+    if token in blacklist:
+        return None
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except JWTError:
+        return None
+
+@app.post("/user-signup/", response_model=schemas.User)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    return crud.create_user(db=db, user=user)
 
 @app.post("/user-login/", response_model=schemas.Token)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
@@ -121,3 +133,9 @@ async def delete_user(
         raise HTTPException(
             status_code=403, detail="You don't have permission to access this resource"
         )
+
+
+@app.post("/logout/")
+async def logout(token: str = Depends(oauth2_scheme)):
+    blacklist.add(token)
+    return {"message": "Successful Logout!"}

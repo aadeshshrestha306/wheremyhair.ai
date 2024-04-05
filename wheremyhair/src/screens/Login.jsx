@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Image,
   SafeAreaView,
@@ -12,16 +12,15 @@ import {
   Pressable,
   TouchableOpacity,
 } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import axios from 'axios';
 
-import { RootStackParamList } from '../App';
+import { AuthContext, AuthProvider } from '../context/AuthContext';
+import Logo from '../components/Logo';
 
-type loginProps = NativeStackScreenProps<RootStackParamList, 'LoginScreen'>
-
-const LoginScreen = ( { navigation }: loginProps) =>  {
+const LoginScreen = ( { navigation }) =>  {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const val = useContext(AuthContext);
 
   const handleLogin = async() => {
     
@@ -50,10 +49,7 @@ const LoginScreen = ( { navigation }: loginProps) =>  {
   return(
     <SafeAreaView style={{flex:1}}>
         <View style={styles.container}>
-            <StatusBar backgroundColor={'#242219'}></StatusBar>
-            <Image
-              source={require('../assets/images/wheremyhair_logo.png')}
-              style={styles.logo}></Image>
+            <Logo />
             <Text style={styles.text}>Sign In to wheremyhair.ai</Text>
             <Text style={styles.font}>Email</Text>
             <TextInput 
@@ -68,7 +64,7 @@ const LoginScreen = ( { navigation }: loginProps) =>  {
               onChangeText={text => setPassword(text)}
               secureTextEntry={true}
               />
-            <Pressable style={styles.button} onPress={ () =>handleLogin()}>
+            <Pressable style={styles.button} onPress={ () =>navigation.navigate('Main', {screen : 'Home'})}>
               <Text style={styles.button_text}>Log In</Text>
             </Pressable>
             <TouchableOpacity onPress={ () => Alert.alert("Redirecting")}>
@@ -76,7 +72,7 @@ const LoginScreen = ( { navigation }: loginProps) =>  {
             </TouchableOpacity>
             <View style={{flexDirection: 'row', justifyContent:'center', marginTop:8}}>
               <Text style={styles.options_2}>Dont have an account?</Text>
-              <TouchableOpacity onPress={ () => navigation.navigate('SignupScreen')}>
+              <TouchableOpacity onPress={ () => navigation.navigate('Signup')}>
                 <Text 
                   style={{fontFamily: 'Kanit-Regular',
                           color: 'rgba(255, 255, 255, 0.8)',
@@ -94,16 +90,6 @@ const styles = StyleSheet.create({
   container:{
       flex:1, 
       backgroundColor: '#242219',
-  },
-
-  logo:{
-    width: 60,
-    height: 60,
-    marginTop: 50,
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    justifyContent: 'center',
-    alignContent: 'center'
   },
 
   text:{

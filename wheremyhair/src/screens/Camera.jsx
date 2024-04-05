@@ -1,17 +1,14 @@
 import React, { useState, useRef } from "react";
 import { View, StyleSheet, ActivityIndicator, TouchableOpacity, StatusBar, Text, Alert, PermissionsAndroid, Platform, Image, NativeModules } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Camera, useCameraDevice } from "react-native-vision-camera";
 import Icons from 'react-native-vector-icons/Ionicons';
 import { launchImageLibrary } from "react-native-image-picker";
 
-import { RootStackParamList } from "../App";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-type camProps = NativeStackScreenProps<RootStackParamList, "Camera">;
 
-const CameraScreen: React.FC<camProps> = ({ navigation }: camProps) => {
-  const camera = useRef<Camera>(null)
+const CameraScreen = ({ navigation }) => {
+  const camera = useRef(null)
   const [imgSource, setImgSource] = useState('');
   const permission = PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
   const cameraPermission = Camera.getCameraPermissionStatus()
@@ -28,7 +25,7 @@ const CameraScreen: React.FC<camProps> = ({ navigation }: camProps) => {
 
       if (!result.didCancel && !result.errorCode) {
         setImgSource(result.assets[0].uri);
-        console.log(result);
+        console.log(imgSource);
       } 
     }
     catch(error){

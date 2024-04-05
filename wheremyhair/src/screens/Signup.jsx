@@ -10,14 +10,11 @@ import {
   Alert,
   Pressable,
 } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import axios from 'axios';
 
-import { RootStackParamList } from '../App';
+import Logo from '../components/Logo';
 
-type signupProps = NativeStackScreenProps<RootStackParamList, 'SignupScreen'>
-
-const SignupScreen = ( { navigation }: signupProps) =>  {
+const SignupScreen = ( { navigation }) =>  {
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -42,7 +39,7 @@ const SignupScreen = ( { navigation }: signupProps) =>  {
         return;
       }
 
-      const response = await axios.post("http://192.168.1.13:8000/users/", {
+      const response = await axios.post("http://192.168.1.13:8000/user-signup/", {
         email: email,
         username: username,
         password: password
@@ -64,10 +61,7 @@ const SignupScreen = ( { navigation }: signupProps) =>  {
   return(
     <SafeAreaView style={{flex:1}}>
         <View style={styles.container}>
-            <StatusBar backgroundColor={'#242219'}></StatusBar>
-            <Image
-              source={require('../assets/images/wheremyhair_logo.png')}
-              style={styles.logo}></Image>
+            <Logo />
             <Text style={styles.text}>Sign Up for wheremyhair.ai</Text>
             <Text style={styles.font}>Email</Text>
             <TextInput 
