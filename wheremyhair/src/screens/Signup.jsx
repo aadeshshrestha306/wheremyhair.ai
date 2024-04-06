@@ -13,6 +13,7 @@ import {
 import axios from 'axios';
 
 import Logo from '../components/Logo';
+import { BASE_URL } from '../utils/Config';
 
 const SignupScreen = ( { navigation }) =>  {
   const [email, setEmail] = useState('')
@@ -39,7 +40,7 @@ const SignupScreen = ( { navigation }) =>  {
         return;
       }
 
-      const response = await axios.post("http://192.168.1.13:8000/user-signup/", {
+      const response = await axios.post("http://192.168.1.11:8000/user-signup/", {
         email: email,
         username: username,
         password: password

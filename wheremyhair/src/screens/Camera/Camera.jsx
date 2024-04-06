@@ -74,19 +74,20 @@ const CameraScreen = ({ navigation }) => {
             <Icons name="images" color={'white'} size={32} style={styles.gallery_button}/>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.camera_button}
             onPress={() => {
               capturePhoto()
             }}
           >
+            <View style={styles.camera_ring}>
+              <View style={styles.camera_button}></View>
+            </View>
           </TouchableOpacity>
-    
           {imgSource !== '' && (
             <Image
               resizeMode='contain'
               style={styles.image}
               source={{
-                uri: `file://${imgSource}`,
+                uri: `file:///${imgSource}`,
               }}
             />
           )}
@@ -130,17 +131,25 @@ const styles = StyleSheet.create({
      flexDirection: 'row', 
      alignItems: 'center',
      marginBottom: 50,
-     justifyContent: 'center'
+     justifyContent: 'center',
   },
 
   camera_button:{
     backgroundColor: 'white',
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-    borderWidth: 5,
     padding: 10,
     borderRadius: 30,
+    width: 50,
+    height: 50,
+  },
+
+  camera_ring:{
     width: 60,
     height: 60,
+    borderRadius: 35,
+    borderWidth: 2,
+    borderColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems:'center'
   },
 
   gallery_button:{

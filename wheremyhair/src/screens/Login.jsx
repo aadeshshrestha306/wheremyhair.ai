@@ -1,87 +1,61 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {
-  Image,
   SafeAreaView,
-  StatusBar,
   StyleSheet,
   Text,
   View,
-  Button,
   TextInput,
   Alert,
   Pressable,
   TouchableOpacity,
 } from 'react-native';
-import axios from 'axios';
 
-import { AuthContext, AuthProvider } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContext';
 import Logo from '../components/Logo';
+import { Screen } from 'react-native-screens';
 
 const LoginScreen = ( { navigation }) =>  {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const val = useContext(AuthContext);
-
-  const handleLogin = async() => {
-    
-    try{
-      const formdata = new FormData();
-      formdata.append('username', email);
-      formdata.append('password', password);
-
-      const response = await axios.post("http://192.168.1.13:8000/user-login/", {
-        formdata
-      });
-
-      if (response.status == 200){
-        Alert.alert("Login successful");
-        setEmail("");
-        setPassword("");
-      } else{
-        Alert.alert("Login failed", "Please check your email and password")
-      }
-    }
-    catch(error){
-      Alert.alert("An error occured. Please try again!")
-    }
-  }
+  const {login} = useContext(AuthContext);
 
   return(
     <SafeAreaView style={{flex:1}}>
-        <View style={styles.container}>
-            <Logo />
-            <Text style={styles.text}>Sign In to wheremyhair.ai</Text>
-            <Text style={styles.font}>Email</Text>
-            <TextInput 
-              style={styles.textfield}
-              value={email}
-              onChangeText={text => setEmail(text)}
-              />
-            <Text style={styles.font}>Password</Text>
-            <TextInput 
-              style={styles.textfield}
-              value={password}
-              onChangeText={text => setPassword(text)}
-              secureTextEntry={true}
-              />
-            <Pressable style={styles.button} onPress={ () =>navigation.navigate('Main', {screen : 'Home'})}>
-              <Text style={styles.button_text}>Log In</Text>
-            </Pressable>
-            <TouchableOpacity onPress={ () => Alert.alert("Redirecting")}>
-              <Text style={styles.options}>Forgot your password?</Text>
-            </TouchableOpacity>
-            <View style={{flexDirection: 'row', justifyContent:'center', marginTop:8}}>
-              <Text style={styles.options_2}>Dont have an account?</Text>
-              <TouchableOpacity onPress={ () => navigation.navigate('Signup')}>
-                <Text 
-                  style={{fontFamily: 'Kanit-Regular',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          alignItems:'center',
-                          textAlign: 'center',
-                          textDecorationLine: 'underline'}}>Create one!</Text>
-              </TouchableOpacity>
-            </View>
+      <View style={styles.container}>
+        <Logo />
+        <Text style={styles.text}>Sign In to wheremyhair.ai</Text>
+        <Text style={styles.font}>Email</Text>
+        <TextInput 
+          style={styles.textfield}
+          value={email}
+          onChangeText={text => setEmail(text)}
+          />
+        <Text style={styles.font}>Password</Text>
+        <TextInput 
+          style={styles.textfield}
+          value={password}
+          onChangeText={text => setPassword(text)}
+          secureTextEntry={true}
+          />
+        <Pressable style={styles.button} onPress={ () => navigation.navigate('Main', {Screen: 'HomeScreen'})}>
+          <Text style={styles.button_text}>Log In</Text>
+        </Pressable>
+        <TouchableOpacity onPress={ () => Alert.alert("Redirecting")}>
+          <Text style={styles.options}>Forgot your password?</Text>
+        </TouchableOpacity>
+        <View style={{flexDirection: 'row', justifyContent:'center', marginTop:8}}>
+          <Text style={styles.options_2}>Dont have an account?</Text>
+          <TouchableOpacity onPress={ () => navigation.navigate('Signup')}>
+            <Text 
+              style={{
+                fontFamily: 'Kanit-Regular',
+                color: 'rgba(255, 255, 255, 0.8)',
+                alignItems:'center',
+                textAlign: 'center',
+                textDecorationLine: 'underline'}}>Create one!</Text>
+          </TouchableOpacity>
         </View>
+      </View>
     </SafeAreaView>
   );
 };
