@@ -7,7 +7,7 @@ import Icons from 'react-native-vector-icons/Ionicons';
 
 import LoginScreen from '../screens/Login';
 import HomeScreen from '../screens/Home';
-import CameraScreen from '../screens/Camera';
+import CameraScreen from '../screens/Camera/Camera';
 import SignupScreen from '../screens/Signup';
 import ProfileView from '../screens/Profile';
 import Splash from './Splash';
