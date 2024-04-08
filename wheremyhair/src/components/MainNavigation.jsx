@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icons from 'react-native-vector-icons/Ionicons';
+import EncryptedStorage from 'react-native-encrypted-storage'
 
 import LoginScreen from '../screens/Login';
 import HomeScreen from '../screens/Home';
@@ -43,9 +44,10 @@ const Bottom = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-      tabBarActiveTintColor: '#242219',
-      tabBarStyle: styles.navbar,
-      tabBarShowLabel: false,
+        tabBarActiveTintColor: '#242219',
+        tabBarStyle: styles.navbar,
+        tabBarShowLabel: false,
+        animation: 'slide_from_right'
       }}
     >
       <Tab.Screen
@@ -82,15 +84,18 @@ const Bottom = () => {
   )
 }
 
+
 const MainNavigation = () => {
-  const { user, isLoggedIn } = useContext(AuthContext);
+  const {  status } = useContext(AuthContext);
   const [ showSplash, setShowSplash ] = useState(true);
 
   useEffect(() => {
     setTimeout(() => {
       setShowSplash(false);
     }, 3000);
+
   }, []);
+  
 
   if (showSplash) {
     return <SplashScreen/>;
@@ -98,8 +103,13 @@ const MainNavigation = () => {
 
   return (
       <NavigationContainer>
-        <Stack.Navigator>
-          {isLoggedIn == false ? (
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+            animation: 'slide_from_left'
+          }}
+        >
+          {status == false ? (
             <>
             <Stack.Screen
               name='Auth'

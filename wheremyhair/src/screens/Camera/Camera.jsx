@@ -12,7 +12,6 @@ const CameraScreen = ({ navigation }) => {
   const camera = useRef(null);
   const [showCamera, setShowCamera] = useState(true);
   const [imgSource, setImgSource] = useState("");
-  const [isCameraPermissionGranted, setCameraPermissionGranted] = useState(false);
 
   useEffect(() => {
     const requestPermissions = async () => {

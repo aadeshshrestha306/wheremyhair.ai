@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect} from 'react';
 import { Alert } from 'react-native';
 import axios from 'axios';
 import EncryptedStorage from 'react-native-encrypted-storage';
@@ -9,8 +9,30 @@ export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [token, setToken] = useState("")
+  const [ status, setStatus ] = useState(Boolean);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const session = await EncryptedStorage.getItem("user_session");
+        if (session !== undefined && session !== null) {
+          const obj = JSON.parse(session);
+          if (obj && obj.login_status !== undefined && obj.login_status !== null) {
+            setStatus(true);
+          } else {
+            setStatus(false); 
+          }
+        } else {
+          setStatus(false); 
+        }
+      } catch (error) {
+        console.error("Error fetching user session:", error);
+        setStatus(false);
+      }
+    };
+  
+    fetchData();
+  }, []);
 
   const logIn = async({email, password}) => {
     try{
@@ -31,24 +53,17 @@ export const AuthProvider = ({ children }) => {
         });
   
       if (response.data && response.data.access_token){
-        setUser(email);
-        setIsLoggedIn(true);
-        setToken(response.data.access_token);
+        const token = response.data.access_token
         await EncryptedStorage.setItem(
           "user_session",
           JSON.stringify({
-            username: user,
-            token: token,
-            status: isLoggedIn
+            username: email,
+            token: response.data.access_token,
+            login_status: true
           })
         );
-        const session = await EncryptedStorage.getItem("user_session");
-
-        if (session !== undefined){
-          const obj = JSON.parse(session);
-          const status = obj.status
-          console.log("Stored Value", status);
-        } 
+      setStatus(true);
+      setUser(email);
       }
     }
     catch(error){
@@ -56,12 +71,15 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  const logOut = () => {
-    setIsLoggedIn(false)
+  const logOut = async() => {
+    await EncryptedStorage.removeItem("user_session",);
+    await EncryptedStorage.clear();
+    setStatus(false);
+    setUser(null);
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, logIn, logOut }}>
+    <AuthContext.Provider value={{ user, status, logIn, logOut }}>
       {children}
     </AuthContext.Provider>
   );

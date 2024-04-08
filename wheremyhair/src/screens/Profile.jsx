@@ -6,7 +6,6 @@ import {
     SafeAreaView,
     StatusBar,
     StyleSheet,
-    ScrollView,
     Dimensions,
     TouchableOpacity
 } from 'react-native';
@@ -18,17 +17,71 @@ const screenWidth = Dimensions.get('screen').width;
 const statusBarHeight = StatusBar.currentHeight || 0;
 
 const ProfileView = ( { navigation } ) => {
-    const {logOut} = useContext(AuthContext);
+    const {logOut, user } = useContext(AuthContext);
 
     return(
         <SafeAreaView style={styles.container}>
-            <View style={styles.semiCircle}></View>
-            <View style={styles.box}></View>
-            <View style={styles.box}></View>
+            <View style={styles.semiCircle}>
+                <Image
+                    defaultSource={require('../assets/images/default.jpg')}
+                    resizeMode='cover'
+                    source={require('../assets/images/profile.jpg')}
+                    style={{
+                        width: screenWidth / 4,
+                        height: screenWidth / 4,
+                        borderRadius: (screenWidth / 4) / 2,
+                        justifyContent: 'center',
+                        alignItems: 'center' // half of width or height to make it a circle
+                    }}
+                />
+                <TouchableOpacity>
+                    <Text style={styles.normal_text2}>Update Photo</Text>
+                </TouchableOpacity>
+                <Text style={styles.normal_text2}>Hi! 🙏</Text>
+                <Text style={styles.normal_text}>{user}</Text>
+            </View>
+            <TouchableOpacity style={styles.box}>
+                <View style={styles.buttons}>
+                    <Icon name="reader-outline" size={30} color={'white'} />
+                    <Text style={styles.button_text}>User Info</Text> 
+                </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.box}>
+                <View style={styles.buttons}>
+                    <Icon name="analytics-outline" size={30} color={'white'} />
+                    <Text style={styles.button_text}>Track Progress</Text> 
+                </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.box}>
+                <View style={styles.buttons}>
+                    <Icon name="chatbox-ellipses-outline" size={30} color={'white'} />
+                    <Text style={styles.button_text}>Contact Me</Text> 
+                </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.box}>
+                <View style={styles.buttons}>
+                    <Icon name="close-circle-outline" size={30} color={'white'} />
+                    <Text style={styles.button_text}>Delete Account</Text> 
+                </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={logOut} style={styles.box}>
+                <View style={styles.buttons}>
+                    <Icon name="exit-outline" size={30} color={'white'} />
+                    <Text style={styles.button_text}>Log Out</Text> 
+                </View>
+            </TouchableOpacity>
             <View style={styles.infobox}>
-                <TouchableOpacity onPress={logOut} style={{flexDirection: 'row', alignItems: 'center', justifyContent:'center'}}>
-                    <Icon name="exit-outline" size={32} color={'white'} />
-                    <Text>Log Out</Text> 
+                <TouchableOpacity>
+                    <Icon name="logo-linkedin" size={34} color={'white'} />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <Icon name="logo-github" size={34} color={'white'} />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <Icon name="logo-twitter" size={34} color={'white'} />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <Icon name="logo-discord" size={34} color={'white'} />
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -42,27 +95,69 @@ const styles = StyleSheet.create({
     },
     
     semiCircle: {
-        height: screenWidth/3, 
-        backgroundColor: 'rgba(64, 59, 42, 0.9)', 
-        marginTop: statusBarHeight,
-        borderBottomLeftRadius: screenWidth,
+        margin: statusBarHeight+5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 0,
+    },
+
+    normal_text:{
+        fontSize: 16,
+        fontFamily: 'Anta-Regular',
+        color: 'white',
+        alignItems:'center',
+        margin: 10,
+        textAlign: 'center'
+    },
+
+    normal_text2:{
+        fontSize: 14,
+        fontFamily: 'Anta-Regular',
+        color: 'rgba(255, 255, 255, 0.8)',
+        alignItems:'center',
+        margin: 10,
+        textAlign: 'center'
     },
 
     box: {
-        height: screenWidth/3, 
+        height: screenWidth/6, 
         backgroundColor: 'rgba(64, 59, 42, 0.9)', 
+        borderRadius: 8,
         margin: 20,
-        borderRadius: 15
+        marginBottom: 0,
+        alignItems: 'flex-start',
+        flexDirection: 'column',
+        justifyContent: 'center'
     },
+
 
     infobox: {
         height: screenWidth/6, 
         backgroundColor: 'rgba(64, 59, 42, 0.9)', 
-        borderRadius: 15,
+        borderRadius: 8,
         margin: 20,
+        marginBottom: 0,
         alignItems: 'center',
-    }
+        flexDirection: 'row',
+        justifyContent: 'space-evenly'
+    },
 
+
+    button_text:{
+        fontSize: 16,
+        fontFamily: 'Kanit-Bold',
+        color: 'white',
+        alignItems:'center',
+        margin: 10,
+        textAlign: 'center'
+    },
+
+    buttons:{
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        justifyContent:'center', 
+        margin: 10,
+    }
 })
 
 export default ProfileView;
