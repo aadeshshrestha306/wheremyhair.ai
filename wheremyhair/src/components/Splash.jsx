@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 
-const Splash = ({navigation}) =>  {
+const SplashScreen = ({navigation}) =>  {
   return(
     <SafeAreaView style={{flex:1}}>
       <View style={styles.container}>
@@ -42,4 +42,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Splash;
+export default SplashScreen;

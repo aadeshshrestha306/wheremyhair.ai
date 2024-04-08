@@ -9,15 +9,15 @@ import {
   Pressable,
   TouchableOpacity,
 } from 'react-native';
+import * as Keychain from 'react-native-keychain';
 
 import { AuthContext } from '../context/AuthContext';
 import Logo from '../components/Logo';
-import { Screen } from 'react-native-screens';
 
 const LoginScreen = ( { navigation }) =>  {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const {login} = useContext(AuthContext);
+  const { logIn } = useContext(AuthContext);
 
   return(
     <SafeAreaView style={{flex:1}}>
@@ -37,7 +37,7 @@ const LoginScreen = ( { navigation }) =>  {
           onChangeText={text => setPassword(text)}
           secureTextEntry={true}
           />
-        <Pressable style={styles.button} onPress={ () => navigation.navigate('Main', {Screen: 'HomeScreen'})}>
+        <Pressable style={styles.button} onPress={ () => logIn({email, password})}>
           <Text style={styles.button_text}>Log In</Text>
         </Pressable>
         <TouchableOpacity onPress={ () => Alert.alert("Redirecting")}>
@@ -45,7 +45,7 @@ const LoginScreen = ( { navigation }) =>  {
         </TouchableOpacity>
         <View style={{flexDirection: 'row', justifyContent:'center', marginTop:8}}>
           <Text style={styles.options_2}>Dont have an account?</Text>
-          <TouchableOpacity onPress={ () => navigation.navigate('Signup')}>
+          <TouchableOpacity onPress={ () => navigation.navigate('Signup')} >
             <Text 
               style={{
                 fontFamily: 'Kanit-Regular',

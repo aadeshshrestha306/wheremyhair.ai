@@ -1,8 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {
-  Image,
   SafeAreaView,
-  StatusBar,
   StyleSheet,
   Text,
   View,
@@ -40,7 +38,7 @@ const SignupScreen = ( { navigation }) =>  {
         return;
       }
 
-      const response = await axios.post("http://192.168.1.11:8000/user-signup/", {
+      const response = await axios.post(BASE_URL+"user-signup/", {
         email: email,
         username: username,
         password: password

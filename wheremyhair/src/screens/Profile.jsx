@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
     Image,
     View,
@@ -7,13 +7,30 @@ import {
     StatusBar,
     StyleSheet,
     ScrollView,
+    Dimensions,
+    TouchableOpacity
 } from 'react-native';
+import Icon from "react-native-vector-icons/Ionicons";
+import { AuthContext } from "../context/AuthContext";
 
+
+const screenWidth = Dimensions.get('screen').width;
+const statusBarHeight = StatusBar.currentHeight || 0;
 
 const ProfileView = ( { navigation } ) => {
+    const {logOut} = useContext(AuthContext);
+
     return(
         <SafeAreaView style={styles.container}>
-            
+            <View style={styles.semiCircle}></View>
+            <View style={styles.box}></View>
+            <View style={styles.box}></View>
+            <View style={styles.infobox}>
+                <TouchableOpacity onPress={logOut} style={{flexDirection: 'row', alignItems: 'center', justifyContent:'center'}}>
+                    <Icon name="exit-outline" size={32} color={'white'} />
+                    <Text>Log Out</Text> 
+                </TouchableOpacity>
+            </View>
         </SafeAreaView>
     );
 };
@@ -23,38 +40,27 @@ const styles = StyleSheet.create({
         flex:1, 
         backgroundColor: '#242219',
     },
-    logo:{
-        width: 50,
-        height: 50,
+    
+    semiCircle: {
+        height: screenWidth/3, 
+        backgroundColor: 'rgba(64, 59, 42, 0.9)', 
+        marginTop: statusBarHeight,
+        borderBottomLeftRadius: screenWidth,
     },
 
-    text:{
-        textAlign: 'center',
-        fontSize: 20,
-        fontFamily : 'Kanit-Bold',
-        color: 'rgba(255, 255, 255, 0.8)',
+    box: {
+        height: screenWidth/3, 
+        backgroundColor: 'rgba(64, 59, 42, 0.9)', 
+        margin: 20,
+        borderRadius: 15
     },
 
-    header:{
-        flexDirection: 'row',
+    infobox: {
+        height: screenWidth/6, 
+        backgroundColor: 'rgba(64, 59, 42, 0.9)', 
+        borderRadius: 15,
+        margin: 20,
         alignItems: 'center',
-        justifyContent: 'center',
-        paddingHorizontal: 20,
-        marginTop: 40,
-        marginBottom: 10,
-    },
-
-    container_2:{
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    },
-
-    content:{
-        textAlign: 'justify',
-        fontSize: 14,
-        fontFamily: 'Anta-Regular',
-        color: 'rgba(0, 0, 0, 0.9)',
-        margin: 30,
-        lineHeight: 22,
     }
 
 })

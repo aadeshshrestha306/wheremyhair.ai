@@ -1,20 +1,39 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { View, StyleSheet, ActivityIndicator, TouchableOpacity, SafeAreaView, Alert, PermissionsAndroid, Dimensions, Image, Text } from "react-native";
 import { Camera, useCameraDevice } from "react-native-vision-camera";
 import Icons from 'react-native-vector-icons/Ionicons';
 import { launchImageLibrary } from "react-native-image-picker";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 import Icon from "react-native-vector-icons/Ionicons";
+import { Screen } from "react-native-screens";
 
 
 const CameraScreen = ({ navigation }) => {
   const camera = useRef(null);
   const [showCamera, setShowCamera] = useState(true);
   const [imgSource, setImgSource] = useState("");
-  const permission = PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
-  const writepermission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
-  const cameraPermission = Camera.getCameraPermissionStatus();
-  const newCameraPermission = Camera.requestCameraPermission();
+  const [isCameraPermissionGranted, setCameraPermissionGranted] = useState(false);
+
+  useEffect(() => {
+    const requestPermissions = async () => {
+      try {
+        const readPermission = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
+        );
+        const writePermission = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+        );
+        const cameraPermission = await Camera.getCameraPermissionStatus();
+        if (cameraPermission !== 'authorized') {
+          await Camera.requestCameraPermission();
+        } 
+      } catch (error) {
+        console.error('Error requesting permissions:', error);
+      }
+    };
+
+    requestPermissions();
+  }, []);
 
   const frontCamera = useCameraDevice('front');
 
@@ -40,7 +59,7 @@ const CameraScreen = ({ navigation }) => {
     if (camera.current !== null){
       try{
         const photo = await camera.current.takePhoto()
-        const uri = 'file://'+photo.path
+        const uri = 'file://'+(photo.path)
         setImgSource(uri);
         await CameraRoll.saveAsset(imgSource ,{
           type:'photo',
@@ -60,67 +79,67 @@ const CameraScreen = ({ navigation }) => {
     return <ActivityIndicator style={{flex:1}} size={50} color={'red'} ></ActivityIndicator>;
   }
   
-    return (
-      <SafeAreaView style={styles.container}>
-        {showCamera ? (
-            <>
-            <View>
-              <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-                <Icons name="caret-back" color={'rgba(255, 255, 255, 0.8)'} size={30} style={{ marginTop: 50, marginLeft: 5, marginBottom: 30, paddingHorizontal: 20 }} />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.cameraContainer}>
-              <Camera
-                ref={camera}
-                style={{flex: 1}}
-                device={frontCamera}
-                isActive={true}
-                photo={true}
+  return (
+    <SafeAreaView style={styles.container}>
+      {showCamera ? (
+        <>
+          <View>
+            <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+              <Icons name="caret-back" color={'rgba(255, 255, 255, 0.8)'} size={30} style={{ marginTop: 50, marginLeft: 5, marginBottom: 30, paddingHorizontal: 20 }} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.cameraContainer}>
+            <Camera
+              ref={camera}
+              style={{flex: 1}}
+              device={frontCamera}
+              isActive={true}
+              photo={true}
                 enableHighQualityPhotos={true}
-                orientation="portrait"
-              />
-              <View style={styles.buttons}>
-                <TouchableOpacity onPress={openGallery}>
-                  <Icons name="images" color={'white'} size={32} style={styles.gallery_button} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={capturePhoto}>
-                  <View style={styles.camera_ring}>
-                    <View style={styles.camera_button}></View>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </>
-          ):(
-            <>
-            {imgSource !== '' && (
-              <Image
-                resizeMode='contain'
-                orientation='landscape'
-                source={{
-                  uri: imgSource
-                }}
-                style={{ flex: 1, transform: [{rotate: '90deg'}] }}
-              />
-            )}
-            <View style={{
-              flexDirection: 'row', 
-              alignItems: 'center',
-              marginBottom: 100,
-              justifyContent: 'center',
-            }}>
-              <TouchableOpacity onPress={() => setShowCamera(true)}>
-                <Icons name="refresh-circle" color={'white'} size={60}/>
+              orientation="portrait"
+            />
+            <View style={styles.buttons}>
+              <TouchableOpacity onPress={openGallery}>
+                <Icons name="images" color={'white'} size={32} style={styles.gallery_button} />
               </TouchableOpacity>
-              <TouchableOpacity>
-                <Icons name="checkmark-circle" color={'white'} size={60}/>
+              <TouchableOpacity onPress={capturePhoto}>
+                <View style={styles.camera_ring}>
+                  <View style={styles.camera_button}></View>
+                </View>
               </TouchableOpacity>
             </View>
-            </>
+          </View>
+        </>
+        ):(
+          <>
+          {imgSource !== '' && (
+            <Image
+              resizeMode='contain'
+              orientation='landscape'
+              source={{
+                uri: imgSource
+              }}
+              style={{ flex: 1, transform: [{rotate: '90deg'}] }}
+            />
           )}
-      </SafeAreaView>
-    );
-  }
+          <View style={{
+            flexDirection: 'row', 
+            alignItems: 'center',
+            marginBottom: 100,
+            justifyContent: 'center',
+          }}>
+            <TouchableOpacity onPress={() => setShowCamera(true)}>
+              <Icons name="refresh-circle" color={'white'} size={60}/>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Icons name="checkmark-circle" color={'white'} size={60}/>
+            </TouchableOpacity>
+          </View>
+          </>
+        )}
+    </SafeAreaView>
+  );
+}
   
 
 const styles = StyleSheet.create({
@@ -164,7 +183,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 35,
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: '#ffffff',
     justifyContent: 'center',
     alignItems:'center'

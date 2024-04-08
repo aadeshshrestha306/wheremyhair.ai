@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -10,14 +10,21 @@ import HomeScreen from '../screens/Home';
 import CameraScreen from '../screens/Camera/Camera';
 import SignupScreen from '../screens/Signup';
 import ProfileView from '../screens/Profile';
-import Splash from './Splash';
+import SplashScreen from './Splash';
+import { AuthContext } from '../context/AuthContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 const Auth = () => {
   return (
-    <Stack.Navigator initialRouteName='Login'>
+    <Stack.Navigator 
+      initialRouteName='Login'
+      screenOptions={{
+        headerShown: false,
+        animation:'slide_from_bottom'
+      }}
+    >
       <Stack.Screen
         name='Login'
         component={LoginScreen}
@@ -76,20 +83,40 @@ const Bottom = () => {
 }
 
 const MainNavigation = () => {
+  const { user, isLoggedIn } = useContext(AuthContext);
+  const [ showSplash, setShowSplash ] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowSplash(false);
+    }, 3000);
+  }, []);
+
+  if (showSplash) {
+    return <SplashScreen/>;
+  }
+
   return (
       <NavigationContainer>
         <Stack.Navigator>
-          {<Stack.Screen
-            name='Auth'
-            component={Auth}
-            options={{ headerShown: false }}
-          />}
-          <Stack.Screen
-            name='Main'
-            options={{ headerShown: false }}
-          >
-            {(Bottom)}
-          </Stack.Screen>
+          {isLoggedIn == false ? (
+            <>
+            <Stack.Screen
+              name='Auth'
+              component={Auth}
+              options={{ headerShown: false }}
+            />
+            </>
+          ):(
+            <>
+            <Stack.Screen
+              name='Main'
+              options={{ headerShown: false }}
+            >
+              {(Bottom)}
+            </Stack.Screen>
+          </>
+          )}
         </Stack.Navigator>
       </NavigationContainer>
   );

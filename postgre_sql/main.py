@@ -8,6 +8,7 @@ from typing import Annotated
 from pydantic import EmailStr
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
+import tensorflow as tf
 
 import models, schemas, crud
 from database import SessionLocal, engine
@@ -20,7 +21,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(title='wheremyhair.ai')
 
 app.add_middleware(
     CORSMiddleware,
@@ -136,6 +137,8 @@ async def delete_user(
 
 
 @app.post("/logout/")
-async def logout(token: str = Depends(oauth2_scheme)):
+async def logout(token: str ): #Depends(oauth2_scheme)
     blacklist.add(token)
     return {"message": "Successful Logout!"}
+
+
