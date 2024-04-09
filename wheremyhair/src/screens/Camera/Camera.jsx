@@ -4,8 +4,6 @@ import { Camera, useCameraDevice } from "react-native-vision-camera";
 import Icons from 'react-native-vector-icons/Ionicons';
 import { launchImageLibrary } from "react-native-image-picker";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
-import Icon from "react-native-vector-icons/Ionicons";
-import { Screen } from "react-native-screens";
 
 
 const CameraScreen = ({ navigation }) => {

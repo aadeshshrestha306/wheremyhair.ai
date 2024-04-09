@@ -9,7 +9,6 @@ import {
   Pressable,
   TouchableOpacity,
 } from 'react-native';
-import * as Keychain from 'react-native-keychain';
 
 import { AuthContext } from '../context/AuthContext';
 import Logo from '../components/Logo';
@@ -45,7 +44,7 @@ const LoginScreen = ( { navigation }) =>  {
         </TouchableOpacity>
         <View style={{flexDirection: 'row', justifyContent:'center', marginTop:8}}>
           <Text style={styles.options_2}>Dont have an account?</Text>
-          <TouchableOpacity onPress={ () => navigation.navigate('Signup')} >
+          <TouchableOpacity onPress={ () => navigation.navigate('Signup')}>
             <Text 
               style={{
                 fontFamily: 'Kanit-Regular',

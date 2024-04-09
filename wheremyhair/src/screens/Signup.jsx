@@ -11,7 +11,7 @@ import {
 import axios from 'axios';
 
 import Logo from '../components/Logo';
-import { BASE_URL } from '../utils/Config';
+import { BASE_URL } from '../services/Config';
 
 const SignupScreen = ( { navigation }) =>  {
   const [email, setEmail] = useState('')

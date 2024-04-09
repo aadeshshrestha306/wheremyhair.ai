@@ -13,3 +13,4 @@ python-jose
 passlib
 psycopg2
 python-multipart
+fastapi-mail

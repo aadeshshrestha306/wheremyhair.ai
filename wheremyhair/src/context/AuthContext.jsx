@@ -3,7 +3,7 @@ import { Alert } from 'react-native';
 import axios from 'axios';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
-import { BASE_URL } from '../utils/Config';
+import { BASE_URL } from '../services/Config';
 
 export const AuthContext = createContext({});
 
@@ -64,6 +64,9 @@ export const AuthProvider = ({ children }) => {
         );
       setStatus(true);
       setUser(email);
+      }
+      else{
+        Alert.alert("Please enter a valid email or password!")
       }
     }
     catch(error){
