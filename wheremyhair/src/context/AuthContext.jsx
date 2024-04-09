@@ -50,7 +50,8 @@ export const AuthProvider = ({ children }) => {
           headers: {
             "Content-Type": 'application/x-www-form-urlencoded'
           }
-        });
+        }
+      );
   
       if (response.data && response.data.access_token){
         const token = response.data.access_token

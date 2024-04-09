@@ -6,7 +6,6 @@ import {
   View,
   TextInput,
   Alert,
-  Pressable,
   TouchableOpacity,
 } from 'react-native';
 
@@ -36,9 +35,9 @@ const LoginScreen = ( { navigation }) =>  {
           onChangeText={text => setPassword(text)}
           secureTextEntry={true}
           />
-        <Pressable style={styles.button} onPress={ () => logIn({email, password})}>
+        <TouchableOpacity style={styles.button} onPress={ () => logIn({email, password})}>
           <Text style={styles.button_text}>Log In</Text>
-        </Pressable>
+        </TouchableOpacity>
         <TouchableOpacity onPress={ () => Alert.alert("Redirecting")}>
           <Text style={styles.options}>Forgot your password?</Text>
         </TouchableOpacity>

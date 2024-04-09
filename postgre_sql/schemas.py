@@ -21,3 +21,7 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+class UserVerification(BaseModel):
+    email: EmailStr
+    verification_code : str
+

@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, BackgroundTasks, Form
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 import bcrypt
@@ -9,9 +10,34 @@ from pydantic import EmailStr
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 import tensorflow as tf
+import random
+import string
 
 import models, schemas, crud
 from database import SessionLocal, engine
+from dotenv import load_dotenv
+import os
+
+load_dotenv('.env')
+
+MAIL_USERNAME= os.getenv('MAIL_USERNAME')
+MAIL_PASSWORD= os.getenv('MAIL_PASSWORD')
+MAIL_FROM= os.getenv('MAIL_FROM')
+MAIL_PORT= int(os.getenv('MAIL_PORT'))
+MAIL_SERVER= os.getenv('MAIL_SERVER')
+MAIL_FROM_NAME= os.getenv('MAIL_FROM_NAME')
+
+conf = ConnectionConfig(
+    MAIL_USERNAME=MAIL_USERNAME,
+    MAIL_PASSWORD=MAIL_PASSWORD,
+    MAIL_FROM=MAIL_FROM,
+    MAIL_PORT=MAIL_PORT,
+    MAIL_SERVER=MAIL_SERVER,
+    MAIL_FROM_NAME=MAIL_FROM_NAME,
+    MAIL_STARTTLS=True,
+    MAIL_SSL_TLS=False,
+    USE_CREDENTIALS=True,
+)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/user-login/')
 
@@ -32,6 +58,9 @@ app.add_middleware(
 )
 
 blacklist = set()
+
+verification_codes = {}
+
 
 def get_db():
     db = SessionLocal()
@@ -67,6 +96,7 @@ def create_access_token(user_email: EmailStr, user_name: str, expires_delta: tim
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+
 def verify_token(token: str):
     if token in blacklist:
         return None
@@ -76,12 +106,44 @@ def verify_token(token: str):
     except JWTError:
         return None
 
-@app.post("/user-signup/", response_model=schemas.User)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email(db, email=user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
+
+def generate_verification_code():
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=6))
+
+
+### Routes
+
+@app.post("/send-verification-code/")
+async def send_verification_code(email: str = Form(...)):
+    verification_code = generate_verification_code()
+    verification_codes[email] = verification_code
+
+    message = MessageSchema(
+        subject="Verification Code",
+        recipients=[email],
+        body=f"Your verification code for wheremyhair.ai is: {verification_code}",
+        subtype=MessageType.html
+    )
+
+    mail = FastMail(conf)
+    await mail.send_message(message)
+
+    return {"message": "Verification code sent", "code" : verification_code}
+
+
+@app.post("/sign-up/", response_model=schemas.User)
+async def verify_email(user_verification: schemas.UserVerification, user: schemas.UserCreate, db: Session = Depends(get_db)):
+    stored_verification_code = verification_codes.get(user_verification.email)
+
+    if stored_verification_code is None or stored_verification_code != user_verification.verification_code:
+        raise HTTPException(status_code=400, detail="Invalid verification code")
+    else:
+        db_user = crud.get_user_by_email(db, email=user.email)
+        if db_user:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        return crud.create_user(db=db, user=user)
+    
+
 
 @app.post("/user-login/", response_model=schemas.Token)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
@@ -134,11 +196,3 @@ async def delete_user(
         raise HTTPException(
             status_code=403, detail="You don't have permission to access this resource"
         )
-
-
-@app.post("/logout/")
-async def logout(token: str ): #Depends(oauth2_scheme)
-    blacklist.add(token)
-    return {"message": "Successful Logout!"}
-
-
