@@ -3,7 +3,7 @@ import { Alert } from 'react-native';
 import axios from 'axios';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
-import { BASE_URL } from '../services/Config';
+import { BASE_URL } from '../../utils/Config';
 
 export const AuthContext = createContext({});
 
