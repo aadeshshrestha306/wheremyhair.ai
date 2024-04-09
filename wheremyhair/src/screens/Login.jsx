@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
 
   options_2:{
     fontFamily: 'Kanit-Regular',
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: 'rgba(255, 255, 255, 0.6)',
     alignItems:'center',
     textAlign: 'center',
     marginRight:3,

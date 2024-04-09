@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     normal_text2:{
         fontSize: 14,
         fontFamily: 'Anta-Regular',
-        color: 'rgba(255, 255, 255, 0.8)',
+        color: 'rgba(255, 255, 255, 0.6)',
         alignItems:'center',
         margin: 10,
         textAlign: 'center'
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
 
     infobox: {
         height: screenWidth/6, 
-        backgroundColor: 'rgba(64, 59, 42, 0.9)', 
+        backgroundColor: 'rgba(64, 59, 42, 0.8)', 
         borderRadius: 8,
         margin: 20,
         marginBottom: 0,
