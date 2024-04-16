@@ -13,6 +13,8 @@ import SignupScreen from '../screens/Signup';
 import ProfileView from '../screens/Profile';
 import SplashScreen from './Splash';
 import { AuthContext } from '../context/AuthContext';
+import ResultScreen from '../screens/Camera/Results';
+import { Camera } from 'react-native-vision-camera';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -40,6 +42,30 @@ const Auth = () => {
   );
 };
 
+
+const Outcome = () => {
+  return (
+    <Stack.Navigator 
+      initialRouteName='Camera'
+      screenOptions={{
+        headerShown: false,
+        animation:'slide_from_bottom'
+      }}
+    >
+      <Stack.Screen
+        name='Camera'
+        component={CameraScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name='Result'
+        component={ResultScreen}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  );
+}
+
 const Bottom = () => {
   return (
     <Tab.Navigator
@@ -61,11 +87,11 @@ const Bottom = () => {
       }} />
 
       <Tab.Screen 
-        name='Camera' 
-        component={CameraScreen}
+        name='Output' 
+        component={Outcome}
         options={{
           headerShown: false,
-          tabBarStyle: {display: 'none'},
+          tabBarStyle: { display: 'none'},
           tabBarIcon: ({ focused }) => (
             <Icons name={focused ? 'camera' : 'camera-outline'} color={'rgba(255, 255, 255, 0.9)'} size={40} />
           ),

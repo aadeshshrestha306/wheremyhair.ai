@@ -14,7 +14,7 @@ import axios from 'axios';
 import EncryptedStorage from 'react-native-encrypted-storage'
 
 import Logo from '../components/Logo';
-import { BASE_URL } from '../../utils/Config';
+import { BASE_URL } from '../../var';
 
 const SignupScreen = ( { navigation }) =>  {
   const [email, setEmail] = useState('')

@@ -1,6 +1,7 @@
-from fastapi import FastAPI, Depends, HTTPException, status, BackgroundTasks, Form
+from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, Form
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
+from fastapi.responses import JSONResponse
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 import bcrypt
@@ -17,6 +18,10 @@ import models, schemas, crud
 from database import SessionLocal, engine
 from dotenv import load_dotenv
 import os
+import io
+from PIL import Image
+import tensorflow as tf
+import numpy as np
 
 load_dotenv('.env')
 
@@ -196,3 +201,32 @@ async def delete_user(
         raise HTTPException(
             status_code=403, detail="You don't have permission to access this resource"
         )
+
+#preproces uploaded image
+def preprocess_img(pet):
+    img_array = pet.resize((224, 224)) 
+    img_array = tf.keras.utils.img_to_array(img_array)
+    img_array = tf.expand_dims(img_array, axis=0)
+    return img_array / 255.0
+
+
+@app.post("/upload-image/")
+async def upload_image(file: UploadFile):
+    contents = await file.read()
+    pet = Image.open(io.BytesIO(contents))
+
+    processed_image = preprocess_img(pet)
+
+    prediction = model.predict(processed_image)
+
+    predicted_class_index = np.argmax(prediction[0])
+
+    class_labels = ["type 2", "type 3", "type 4", "type 5", "type 6", "type 7"]
+    prediction_label = class_labels[predicted_class_index]
+
+    confidence = prediction[0][predicted_class_index] * 100
+
+    return JSONResponse(content={"prediction": prediction_label,
+                                 "confidence": confidence})
+
+model = tf.keras.models.load_model("baldness.h5", compile=False)    

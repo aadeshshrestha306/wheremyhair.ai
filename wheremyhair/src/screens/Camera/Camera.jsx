@@ -5,6 +5,9 @@ import Icons from 'react-native-vector-icons/Ionicons';
 import { launchImageLibrary } from "react-native-image-picker";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 
+import Results from "./Results";
+import { Axios } from "axios";
+import { BASE_URL } from "../../../var";
 
 const CameraScreen = ({ navigation }) => {
   const camera = useRef(null);
@@ -72,6 +75,10 @@ const CameraScreen = ({ navigation }) => {
     }
   }
 
+  const generateResult = async({navigation}) => {
+    const response = Axios.post(BASE_URL+"")
+  }
+
   if (frontCamera == null) {
     return <ActivityIndicator style={{flex:1}} size={50} color={'red'} ></ActivityIndicator>;
   }
@@ -128,7 +135,7 @@ const CameraScreen = ({ navigation }) => {
             <TouchableOpacity onPress={() => setShowCamera(true)}>
               <Icons name="refresh-circle" color={'white'} size={60}/>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Result')}>
               <Icons name="checkmark-circle" color={'white'} size={60}/>
             </TouchableOpacity>
           </View>
