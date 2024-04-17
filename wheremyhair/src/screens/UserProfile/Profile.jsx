@@ -7,10 +7,11 @@ import {
     StatusBar,
     StyleSheet,
     Dimensions,
-    TouchableOpacity
+    TouchableOpacity,
+    Linking
 } from 'react-native';
 import Icon from "react-native-vector-icons/Ionicons";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 
 
 const screenWidth = Dimensions.get('screen').width;
@@ -19,13 +20,29 @@ const statusBarHeight = StatusBar.currentHeight || 0;
 const ProfileView = ( { navigation } ) => {
     const {logOut, user } = useContext(AuthContext);
 
+    const openLinkedIn = () => {
+        Linking.openURL("https://www.linkedin.com/in/aadesh-shrestha-aerosol");
+      };
+    
+      const openGitHub = () => {
+        Linking.openURL("https://github.com/aadeshshrestha306");
+      };
+    
+      const openTwitter = () => {
+        Linking.openURL("https://twitter.com/aadesh_21");
+      };
+    
+      const openMail = () => {
+        Linking.openURL("mailto:bigelonmuskfan@gmail.com");
+      };
+
     return(
         <SafeAreaView style={styles.container}>
             <View style={styles.semiCircle}>
                 <Image
-                    defaultSource={require('../assets/images/default.jpg')}
+                    defaultSource={require('../../assets/images/default.jpg')}
                     resizeMode='cover'
-                    source={require('../assets/images/profile.jpg')}
+                    source={require('../../assets/images/profile.jpg')}
                     style={{
                         width: screenWidth / 4,
                         height: screenWidth / 4,
@@ -34,28 +51,25 @@ const ProfileView = ( { navigation } ) => {
                         alignItems: 'center' // half of width or height to make it a circle
                     }}
                 />
-                <TouchableOpacity>
-                    <Text style={styles.normal_text2}>Update Photo</Text>
-                </TouchableOpacity>
                 <Text style={styles.normal_text2}>Hi! 🙏</Text>
                 <Text style={styles.normal_text}>{user}</Text>
             </View>
-            <TouchableOpacity style={styles.box}>
+            <TouchableOpacity style={styles.box} onPress={ () => navigation.navigate('UserInfo')}>
                 <View style={styles.buttons}>
                     <Icon name="reader-outline" size={30} color={'white'} />
                     <Text style={styles.button_text}>User Info</Text> 
                 </View>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.box}>
+            <TouchableOpacity style={styles.box} onPress={ () => navigation.navigate('UserProgress')}>
                 <View style={styles.buttons}>
                     <Icon name="analytics-outline" size={30} color={'white'} />
                     <Text style={styles.button_text}>Track Progress</Text> 
                 </View>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.box}>
+            <TouchableOpacity style={styles.box} onPress={openMail}>
                 <View style={styles.buttons}>
                     <Icon name="chatbox-ellipses-outline" size={30} color={'white'} />
-                    <Text style={styles.button_text}>Contact Me</Text> 
+                    <Text style={styles.button_text}>Contact Us</Text> 
                 </View>
             </TouchableOpacity>
             <TouchableOpacity style={styles.box}>
@@ -71,17 +85,14 @@ const ProfileView = ( { navigation } ) => {
                 </View>
             </TouchableOpacity>
             <View style={styles.infobox}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={openLinkedIn}>
                     <Icon name="logo-linkedin" size={34} color={'white'} />
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={openGitHub}>
                     <Icon name="logo-github" size={34} color={'white'} />
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={openTwitter}>
                     <Icon name="logo-twitter" size={34} color={'white'} />
-                </TouchableOpacity>
-                <TouchableOpacity>
-                    <Icon name="logo-discord" size={34} color={'white'} />
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -133,7 +144,7 @@ const styles = StyleSheet.create({
 
     infobox: {
         height: screenWidth/6, 
-        backgroundColor: 'rgba(64, 59, 42, 0.8)', 
+        backgroundColor: 'rgba(64, 59, 42, 0.9)', 
         borderRadius: 8,
         margin: 20,
         marginBottom: 0,

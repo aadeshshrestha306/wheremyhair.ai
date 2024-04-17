@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, Form
+from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, Form, File
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 from fastapi.responses import JSONResponse
@@ -23,6 +23,18 @@ from PIL import Image
 import tensorflow as tf
 import numpy as np
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
+gpus = tf.config.list_physical_devices('GPU')
+if gpus:
+    try:
+        for gpu in gpus:
+            tf.config.experimental.set_virtual_device_configuration(gpu, [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=1024)])
+        logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+        print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+    except RuntimeError as e:
+        print(e)
+
 load_dotenv('.env')
 
 MAIL_USERNAME= os.getenv('MAIL_USERNAME')
@@ -44,6 +56,8 @@ conf = ConnectionConfig(
     USE_CREDENTIALS=True,
 )
 
+model = tf.keras.models.load_model("../baldness.h5", compile=False) 
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/user-login/')
 
 SECRET_KEY = "f53c82add9a19fa737053af04f5df4b6790a3af1d9359d498dbc8977dad50ae9"
@@ -58,7 +72,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "DELETE", "PUT"],
     allow_headers=["*"]
 )
 
@@ -117,6 +131,10 @@ def generate_verification_code():
 
 
 ### Routes
+
+@app.get("/hello-world/")
+def hello_world():
+    return {'message': 'Hello World'}
 
 @app.post("/send-verification-code/")
 async def send_verification_code(email: str = Form(...)):
@@ -228,5 +246,4 @@ async def upload_image(file: UploadFile):
 
     return JSONResponse(content={"prediction": prediction_label,
                                  "confidence": confidence})
-
-model = tf.keras.models.load_model("baldness.h5", compile=False)    
+   

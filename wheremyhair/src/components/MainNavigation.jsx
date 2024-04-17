@@ -4,17 +4,17 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icons from 'react-native-vector-icons/Ionicons';
-import EncryptedStorage from 'react-native-encrypted-storage'
 
 import LoginScreen from '../screens/Login';
 import HomeScreen from '../screens/Home';
 import CameraScreen from '../screens/Camera/Camera';
 import SignupScreen from '../screens/Signup';
-import ProfileView from '../screens/Profile';
+import ProfileView from '../screens/UserProfile/Profile';
 import SplashScreen from './Splash';
 import { AuthContext } from '../context/AuthContext';
 import ResultScreen from '../screens/Camera/Results';
-import { Camera } from 'react-native-vision-camera';
+import UserInfoScreen from '../screens/UserProfile/UserInfo';
+import UserProgressScreen from '../screens/UserProfile/UserProgress';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -49,7 +49,7 @@ const Outcome = () => {
       initialRouteName='Camera'
       screenOptions={{
         headerShown: false,
-        animation:'slide_from_bottom'
+        animation:'slide_from_right'
       }}
     >
       <Stack.Screen
@@ -60,6 +60,34 @@ const Outcome = () => {
       <Stack.Screen
         name='Result'
         component={ResultScreen}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+const UserProfile = () => {
+  return (
+    <Stack.Navigator 
+      initialRouteName='Overview'
+      screenOptions={{
+        headerShown: false,
+        animation:'slide_from_right'
+      }}
+    >
+      <Stack.Screen
+        name='Overview'
+        component={ProfileView}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name='UserInfo'
+        component={UserInfoScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name='UserProgress'
+        component={UserProgressScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
@@ -82,7 +110,7 @@ const Bottom = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-          <Icons name={focused ? 'home' : 'home-outline'} color={'rgba(255, 255, 255, 0.9)'} size={26} />
+            <Icons name={focused ? 'home' : 'home-outline'} color={'rgba(255, 255, 255, 0.9)'} size={26} />
          ),
       }} />
 
@@ -90,16 +118,16 @@ const Bottom = () => {
         name='Output' 
         component={Outcome}
         options={{
-          headerShown: false,
-          tabBarStyle: { display: 'none'},
-          tabBarIcon: ({ focused }) => (
-            <Icons name={focused ? 'camera' : 'camera-outline'} color={'rgba(255, 255, 255, 0.9)'} size={40} />
+            headerShown: false,
+            tabBarStyle: { display: 'none'},
+            tabBarIcon: ({ focused }) => (
+              <Icons name={focused ? 'camera' : 'camera-outline'} color={'rgba(255, 255, 255, 0.9)'} size={40} />
           ),
         }} />
 
       <Tab.Screen 
         name='Profile' 
-        component={ProfileView}
+        component={UserProfile}
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }) => (

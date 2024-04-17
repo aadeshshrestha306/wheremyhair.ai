@@ -3,8 +3,8 @@ pandas
 opencv-python
 matplotlib
 seaborn
-tensorflow<2.11
-keras<2.11
+tensorflow==2.10
+keras==2.10
 pyarrow
 fastapi
 uvicorn
@@ -14,3 +14,4 @@ passlib
 psycopg2
 python-multipart
 fastapi-mail
+scipy

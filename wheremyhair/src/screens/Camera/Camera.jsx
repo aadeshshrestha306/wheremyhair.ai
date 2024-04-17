@@ -6,8 +6,9 @@ import { launchImageLibrary } from "react-native-image-picker";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 
 import Results from "./Results";
-import { Axios } from "axios";
+import axios from "axios";
 import { BASE_URL } from "../../../var";
+import EncryptedStorage from "react-native-encrypted-storage";
 
 const CameraScreen = ({ navigation }) => {
   const camera = useRef(null);
@@ -75,8 +76,38 @@ const CameraScreen = ({ navigation }) => {
     }
   }
 
-  const generateResult = async({navigation}) => {
-    const response = Axios.post(BASE_URL+"")
+  const processPhoto = async() => {
+    if(imgSource){
+      try{
+        const formdata = new FormData();
+        formdata.append("file", {
+          uri: imgSource,
+          type: "image/jpeg",
+          name: "photo.jpg",
+        });
+
+        const response = await axios.post(BASE_URL+"upload-image/",
+          formdata,
+          {
+            headers : {
+              "Content-Type" : 'multipart/form-data'
+            }
+          }
+        )
+
+        if (response.data && response.data.prediction){
+          const prediction = response.data.prediction
+          const confidence = response.data.confidence * 0.1
+          Alert.alert("Successfully processed image!")
+          navigation.navigate("Result", { prediction, confidence, imgLink: imgSource });
+        }
+      }
+      catch(error){
+        console.log(error)
+      }
+    }else{
+      console.log('Error')
+    }
   }
 
   if (frontCamera == null) {
@@ -135,7 +166,7 @@ const CameraScreen = ({ navigation }) => {
             <TouchableOpacity onPress={() => setShowCamera(true)}>
               <Icons name="refresh-circle" color={'white'} size={60}/>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('Result')}>
+            <TouchableOpacity onPress={processPhoto}>
               <Icons name="checkmark-circle" color={'white'} size={60}/>
             </TouchableOpacity>
           </View>
