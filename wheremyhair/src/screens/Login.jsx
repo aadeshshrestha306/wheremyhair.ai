@@ -38,9 +38,6 @@ const LoginScreen = ( { navigation }) =>  {
         <TouchableOpacity style={styles.button} onPress={ () => logIn({email, password})}>
           <Text style={styles.button_text}>Log In</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={ () => Alert.alert("Redirecting")}>
-          <Text style={styles.options}>Forgot your password?</Text>
-        </TouchableOpacity>
         <View style={{flexDirection: 'row', justifyContent:'center', marginTop:8}}>
           <Text style={styles.options_2}>Dont have an account?</Text>
           <TouchableOpacity onPress={ () => navigation.navigate('Signup')}>

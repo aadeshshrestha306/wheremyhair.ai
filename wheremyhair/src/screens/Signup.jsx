@@ -116,13 +116,15 @@ const SignupScreen = ( { navigation }) =>  {
             >
               <View style={styles.modalContainer}>
                 <View style={styles.modalView}>
+                  <Text style={styles.font}>Enter the OTP sent to your email</Text>
                   <TextInput
                     style={styles.textfield}
                     value={verificatiionCode}
                     onChangeText={text => setVerificationCode(text)}
+                    placeholder='6 digit code'
                   />
                   <TouchableOpacity style={styles.button} onPress={() => handleSignUp()}>
-                    <Text style={styles.button_text}>Verify</Text>
+                    <Text style={styles.button_text}>Confirm and SignUp</Text>
                   </TouchableOpacity>
                 </View>
               </View>
