@@ -14,6 +14,7 @@ const CameraScreen = ({ navigation }) => {
   const camera = useRef(null);
   const [showCamera, setShowCamera] = useState(true);
   const [imgSource, setImgSource] = useState("");
+  const [cameraType, setCameraType] = useState('front')
 
   useEffect(() => {
     const requestPermissions = async () => {
@@ -36,20 +37,11 @@ const CameraScreen = ({ navigation }) => {
     requestPermissions();
   }, []);
 
-  const frontCamera = useCameraDevice('front');
+  const frontCamera = useCameraDevice(cameraType);
 
   const openGallery = async () => {
     try{
-      const result = await launchImageLibrary({
-        mediaType: 'photo',
-        quality: 1,
-      });
-
-      if (!result.didCancel && !result.errorCode) {
-        setImgSource(result.assets[0].uri)
-        console.log(imgSource);
-        setShowCamera(false);
-      } 
+      setCameraType(cameraType === 'front' ? 'back' : 'front');
     }
     catch(error){
       Alert.alert("Please select an image!")
@@ -98,8 +90,10 @@ const CameraScreen = ({ navigation }) => {
         if (response.data && response.data.prediction){
           const prediction = response.data.prediction
           const confidence = response.data.confidence * 0.1
+          const description = response.data.description
+          const advice = response.data.advice
           Alert.alert("Successfully processed image!")
-          navigation.navigate("Result", { prediction, confidence, imgLink: imgSource });
+          navigation.navigate("Result", { prediction, confidence, description, advice, imgLink: imgSource });
         }
       }
       catch(error){
@@ -135,7 +129,7 @@ const CameraScreen = ({ navigation }) => {
             />
             <View style={styles.buttons}>
               <TouchableOpacity onPress={openGallery}>
-                <Icons name="images" color={'white'} size={32} style={styles.gallery_button} />
+                <Icons name="sync" color={'white'} size={40} style={styles.gallery_button} />
               </TouchableOpacity>
               <TouchableOpacity onPress={capturePhoto}>
                 <View style={styles.camera_ring}>
@@ -154,7 +148,7 @@ const CameraScreen = ({ navigation }) => {
               source={{
                 uri: imgSource
               }}
-              style={{ flex: 1, transform: [{rotate: '90deg'}] }}
+              style={[{ flex: 1 }, cameraType === 'front' && { transform: [{rotate: '90deg'}] }]}
             />
           )}
           <View style={{
@@ -225,7 +219,7 @@ const styles = StyleSheet.create({
   },
 
   gallery_button:{
-    marginLeft: -100,
+    marginLeft: -85,
   },  
 });
 

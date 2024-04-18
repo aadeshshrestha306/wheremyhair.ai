@@ -24,6 +24,7 @@
     "javascript": "^1.0.0",
     "react": "18.2.0",
     "react-native": "^0.73.5",
+    "react-native-chatgpt": "^0.9.0",
     "react-native-confirmation-code-field": "^7.4.0",
     "react-native-encrypted-storage": "^4.0.3",
     "react-native-gesture-handler": "^2.16.0",

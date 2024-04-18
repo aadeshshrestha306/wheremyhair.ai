@@ -3,8 +3,7 @@ import React from 'react'
 import Header from "../../components/Header";
 
 const ResultScreen = ({ route }) => {
-    const { prediction, confidence, imgLink } = route.params;
-
+    const { prediction, confidence, description, advice, imgLink } = route.params;
     const roundedConfidence = parseFloat(confidence).toFixed(2);
 
     return(
@@ -17,6 +16,9 @@ const ResultScreen = ({ route }) => {
                 <Text style={styles.header_2}>
                     Severity Level - {prediction}
                 </Text>
+                <Text style={styles.content}>
+                    {description}
+                </Text>
                 <View style={{ flex: 1, alignItems: "center", justifyContent: "center"}}>
                     <Image
                         resizeMode='contain'
@@ -27,6 +29,12 @@ const ResultScreen = ({ route }) => {
                         style={{ flex: 1, transform: [{rotate: '90deg'}], width: 200, height: 200}}
                     />
                 </View>
+                <Text style={styles.header_1}>
+                    Advice for You
+                </Text>
+                <Text style={styles.content}>
+                    {advice}
+                </Text>
                 <Text style={styles.header_1}>
                     Help Us Improve!
                 </Text>
@@ -50,11 +58,11 @@ const styles = StyleSheet.create({
 
     content:{
         textAlign: 'justify',
-        fontSize: 14,
+        fontSize: 15,
         fontFamily: 'Anta-Regular',
         color: '#242219',
         margin: 30,
-        marginTop: 20,
+        marginTop: 0,
         marginBottom: 10,
         lineHeight: 30,
     },
@@ -71,6 +79,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Anta-Regular',
         color: '#242219',
         margin: 30,
+        marginBottom: 10,
     },
 
     header_2:{
@@ -79,6 +88,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Anta-Regular',
         color: '#242219',
         margin: 30,
+        marginBottom: 10
     }
 })
 export default ResultScreen;

@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 
     content:{
         textAlign: 'justify',
-        fontSize: 14,
+        fontSize: 15,
         fontFamily: 'Anta-Regular',
         color: '#242219',
         margin: 30,
