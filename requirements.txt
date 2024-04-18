@@ -15,4 +15,4 @@ psycopg2
 python-multipart
 fastapi-mail
 scipy
-google-generativeai
+anthropic

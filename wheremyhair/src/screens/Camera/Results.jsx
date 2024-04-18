@@ -30,11 +30,14 @@ const ResultScreen = ({ route }) => {
                     />
                 </View>
                 <Text style={styles.header_1}>
-                    Advice for You
+                    Personalized Advice for You
                 </Text>
                 <Text style={styles.content}>
                     {advice}
                 </Text>
+                <Text style={styles.options_2}>
+                        -powered with claude.ai
+                    </Text>
                 <Text style={styles.header_1}>
                     Help Us Improve!
                 </Text>
@@ -89,6 +92,13 @@ const styles = StyleSheet.create({
         color: '#242219',
         margin: 30,
         marginBottom: 10
-    }
+    },
+
+    options_2:{
+        fontFamily: 'Kanit-Regular',
+        color: 'rgba(36, 34, 25, 0.6)',
+        alignItems:'center',
+        textAlign: 'center',
+      }
 })
 export default ResultScreen;

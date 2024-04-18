@@ -8,9 +8,9 @@ import { BASE_URL } from '../../var';
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [ user, setUser ] = useState('');
   const [ status, setStatus ] = useState(Boolean);
-
+  const [ email, setEmail ] = useState('')
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -55,16 +55,19 @@ export const AuthProvider = ({ children }) => {
   
       if (response.data && response.data.access_token){
         const token = response.data.access_token
+        const username = response.data.username
         await EncryptedStorage.setItem(
           "user_session",
           JSON.stringify({
-            username: email,
-            token: response.data.access_token,
+            username: username,
+            email: email,
+            token: token,
             login_status: true
           })
         );
       setStatus(true);
-      setUser(email);
+      setUser(username);
+      setEmail(email);
       }
       else{
         Alert.alert("Please enter a valid email or password!")
@@ -83,7 +86,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, status, logIn, logOut }}>
+    <AuthContext.Provider value={{ user, email, status, logIn, logOut }}>
       {children}
     </AuthContext.Provider>
   );
