@@ -15,6 +15,7 @@ import { AuthContext } from '../context/AuthContext';
 import ResultScreen from '../screens/Camera/Results';
 import UserInfoScreen from '../screens/UserProfile/UserInfo';
 import UserProgressScreen from '../screens/UserProfile/UserProgress';
+import Toast from 'react-native-toast-message';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();

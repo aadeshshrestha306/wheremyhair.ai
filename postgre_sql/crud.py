@@ -29,3 +29,13 @@ def delete_user(db: Session, user_email: EmailStr):
         db.delete(db_user)
         db.commit()
     return db_user
+
+def update_user(db: Session, user_email : EmailStr, username : str):
+    db_user = db.query(models.User).filter(models.User.email == user_email).first()
+    if db_user:
+        db_user.username = username
+        db.commit()
+        db.refresh(db_user)
+        return db_user
+    else:
+        return None

@@ -2,7 +2,6 @@ import React, { createContext, useState, useEffect} from 'react';
 import { Alert } from 'react-native';
 import axios from 'axios';
 import EncryptedStorage from 'react-native-encrypted-storage';
-
 import { BASE_URL } from '../../var';
 
 export const AuthContext = createContext({});

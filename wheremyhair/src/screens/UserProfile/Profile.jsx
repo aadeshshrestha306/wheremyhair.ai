@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
     Image,
     View,
@@ -8,7 +8,8 @@ import {
     StyleSheet,
     Dimensions,
     TouchableOpacity,
-    Linking
+    Linking,
+    Modal
 } from 'react-native';
 import Icon from "react-native-vector-icons/Ionicons";
 import { AuthContext } from "../../context/AuthContext";
@@ -19,6 +20,7 @@ const statusBarHeight = StatusBar.currentHeight || 0;
 
 const ProfileView = ( { navigation } ) => {
     const {logOut, user } = useContext(AuthContext);
+    const [ modalVisible, setModalVisible ] = useState(false);
 
     const openLinkedIn = () => {
         Linking.openURL("https://www.linkedin.com/in/aadesh-shrestha-aerosol");
@@ -38,6 +40,27 @@ const ProfileView = ( { navigation } ) => {
 
     return(
         <SafeAreaView style={styles.container}>
+            <Modal
+                    visible={modalVisible}
+                    animationType='slide'
+                    onRequestClose={() =>{
+                      setModalVisible(!modalVisible);
+                    }}
+                    transparent={true}
+                >
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalView}>
+                        <Text style={styles.font}>Are you sure you want to delete your account?</Text>
+                        <TouchableOpacity style={styles.textfield}>
+                            <Text style={styles.button_text}>Delete</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.textfield} onPress={() => setModalVisible(false)}>
+                            <Text style={styles.button_text}>Cancel</Text>
+                        </TouchableOpacity>
+                        </View>
+                    </View>
+
+                </Modal>
             <View style={styles.semiCircle}>
                 <Image
                     defaultSource={require('../../assets/images/default.jpg')}
@@ -48,7 +71,7 @@ const ProfileView = ( { navigation } ) => {
                         height: screenWidth / 4,
                         borderRadius: (screenWidth / 4) / 2,
                         justifyContent: 'center',
-                        alignItems: 'center' // half of width or height to make it a circle
+                        alignItems: 'center' 
                     }}
                 />
                 <Text style={styles.normal_text2}>Hi 🙏</Text>
@@ -72,7 +95,7 @@ const ProfileView = ( { navigation } ) => {
                     <Text style={styles.button_text}>Contact Us</Text> 
                 </View>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.box}>
+            <TouchableOpacity style={styles.box} onPress={() => setModalVisible(true)}>
                 <View style={styles.buttons}>
                     <Icon name="close-circle-outline" size={30} color={'white'} />
                     <Text style={styles.button_text}>Delete Account</Text> 
@@ -168,7 +191,52 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
         justifyContent:'center', 
         margin: 10,
-    }
+    },
+
+    font:{
+        fontFamily: 'Kanit-Regular',
+        color: '#ffffff',
+        marginTop: 20,
+        marginLeft: 15,
+    },
+
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      },
+
+    modalView: {
+        backgroundColor: '#242219',
+        borderRadius: 10,
+        padding: 20,
+        alignItems: 'center',
+        width: Dimensions.get('window').width/1.5,
+      },
+
+      textfield:{
+        backgroundColor: 'rgba(64, 59, 42, 0.5)',
+        margin: 12,
+        borderRadius: 6,
+        height: 48,
+        color:'rgba(255, 255, 255, 0.8)',
+        fontFamily: 'Kanit-Regular',
+        fontSize: 16,
+        justifyContent:'center',
+        alignItems: 'center'
+      },
+
+      button_text:{
+        fontSize: 18,
+        fontFamily: 'Kanit-Bold',
+        color: 'rgba(255, 255, 255, 0.8)',
+        alignItems:'center',
+        margin: 10,
+        textAlign: 'center'
+      },
+    
+    
 })
 
 export default ProfileView;

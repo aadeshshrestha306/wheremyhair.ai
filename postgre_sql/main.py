@@ -78,8 +78,6 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-blacklist = set()
-
 verification_codes = {}
 
 
@@ -118,15 +116,6 @@ def create_access_token(user_email: EmailStr, user_name: str, expires_delta: tim
     return encoded_jwt
 
 
-def verify_token(token: str):
-    if token in blacklist:
-        return None
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload
-    except JWTError:
-        return None
-
 
 def generate_verification_code():
     return ''.join(random.choices(string.ascii_letters + string.digits, k=6))
@@ -136,10 +125,10 @@ def generate_verification_code():
 
 @app.get("/hello-world/")
 def hello_world():
-    return {'message': 'Hello World'}
+    return {'message': 'Welcome to wheremyhair.ai'}
 
 @app.post("/send-verification-code/")
-async def send_verification_code(email: str = Form(...)):
+async def send_verification_code(email: EmailStr = Form(...)):
     verification_code = generate_verification_code()
     verification_codes[email] = verification_code
 
@@ -221,6 +210,22 @@ async def delete_user(
         raise HTTPException(
             status_code=403, detail="You don't have permission to access this resource"
         )
+
+@app.put("/users/{username}")
+async def update_user(
+    user_email: EmailStr,
+    username: str,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    if current_user['email'] == user_email:
+        crud.update_user(db=db, user_email=user_email, username=username)
+        return {"message": "Username updated successfully"}
+    else:
+        raise HTTPException(
+            status_code=403, detail="You don't have permission to access this resource"
+        )
+    
 
 #preproces uploaded image
 def preprocess_img(pet):
