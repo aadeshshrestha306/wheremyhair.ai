@@ -60,7 +60,6 @@ export const AuthProvider = ({ children }) => {
           JSON.stringify({
             username: username,
             email: email,
-            token: token,
             login_status: true
           })
         );
@@ -73,7 +72,11 @@ export const AuthProvider = ({ children }) => {
       }
     }
     catch(error){
-      Alert.alert("An error occured. Please try again!")
+      if(error.response.status === 401){
+        Alert.alert("User not found!")
+      }else{
+        Alert.alert("An error occured. Please try again!")
+      }
     }
   }
 
@@ -83,6 +86,7 @@ export const AuthProvider = ({ children }) => {
     setStatus(false);
     setUser(null);
   }
+
 
   return (
     <AuthContext.Provider value={{ user, email, status, logIn, logOut }}>

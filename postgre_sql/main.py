@@ -9,11 +9,10 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 from pydantic import EmailStr
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Optional
 import tensorflow as tf
 import random
 import string
-import json
+import imghdr
 
 import models, schemas, crud
 from database import SessionLocal, engine
@@ -25,7 +24,9 @@ import tensorflow as tf
 import numpy as np
 import anthropic
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1" 
+
+"""
 
 gpus = tf.config.list_physical_devices('GPU')
 if gpus:
@@ -35,7 +36,7 @@ if gpus:
         logical_gpus = tf.config.experimental.list_logical_devices('GPU')
         print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
     except RuntimeError as e:
-        print(e)
+        print(e)"""
 
 load_dotenv('.env')
 
@@ -45,6 +46,7 @@ MAIL_FROM= os.getenv('MAIL_FROM')
 MAIL_PORT= int(os.getenv('MAIL_PORT'))
 MAIL_SERVER= os.getenv('MAIL_SERVER')
 MAIL_FROM_NAME= os.getenv('MAIL_FROM_NAME')
+API_KEY = os.getenv('API_KEY')
 
 conf = ConnectionConfig(
     MAIL_USERNAME=MAIL_USERNAME,
@@ -62,6 +64,9 @@ model = tf.keras.models.load_model("../baldness.h5", compile=False)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/user-login/')
 
+client = anthropic.Anthropic(api_key=API_KEY)
+
+
 SECRET_KEY = "f53c82add9a19fa737053af04f5df4b6790a3af1d9359d498dbc8977dad50ae9"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
@@ -78,6 +83,8 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+global verification_codes
+
 verification_codes = {}
 
 
@@ -90,15 +97,18 @@ def get_db():
 
 
 def hash_password(password: str) -> str:
+    """Hash password function"""
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     return hashed_password.decode('utf-8')
 
 
 def check_password(plain_password: str, hashed_password: str) -> bool:
+    """Check Password Function"""
     return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
 
 def authenticate_user(email: EmailStr, password: str, db: Session):
+    """User Authentication"""
     db_user = crud.get_user_by_email(db, email=email)
     if not db_user or not check_password(password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Incorrect email or password", headers={"WWW-Authenticate": "Bearer"})
@@ -106,6 +116,7 @@ def authenticate_user(email: EmailStr, password: str, db: Session):
 
 
 def create_access_token(user_email: EmailStr, user_name: str, expires_delta: timedelta):
+    """JWT access token generator"""
     to_encode = {'email': user_email, 'name':user_name}
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
@@ -116,17 +127,20 @@ def create_access_token(user_email: EmailStr, user_name: str, expires_delta: tim
     return encoded_jwt
 
 
-
 def generate_verification_code():
+    """Verification code for email"""
     return ''.join(random.choices(string.ascii_letters + string.digits, k=6))
 
 
 ### Routes
 
+# Welcome Message
 @app.get("/hello-world/")
 def hello_world():
     return {'message': 'Welcome to wheremyhair.ai'}
 
+
+# User Verification Post Method
 @app.post("/send-verification-code/")
 async def send_verification_code(email: EmailStr = Form(...)):
     verification_code = generate_verification_code()
@@ -141,24 +155,26 @@ async def send_verification_code(email: EmailStr = Form(...)):
 
     mail = FastMail(conf)
     await mail.send_message(message)
-
     return {"message": "Verification code sent", "code" : verification_code}
 
 
+# New user sign up Post Method
 @app.post("/sign-up/", response_model=schemas.User)
-async def verify_email(user_verification: schemas.UserVerification, user: schemas.UserCreate, db: Session = Depends(get_db)):
+def verify_email(user_verification: schemas.UserVerification, user: schemas.UserCreate, db: Session = Depends(get_db)):
     stored_verification_code = verification_codes.get(user_verification.email)
-
     if stored_verification_code is None or stored_verification_code != user_verification.verification_code:
         raise HTTPException(status_code=400, detail="Invalid verification code")
     else:
         db_user = crud.get_user_by_email(db, email=user.email)
         if db_user:
             raise HTTPException(status_code=400, detail="Email already registered")
+        db_username = crud.get_user(db, username=user.username)
+        if db_username:
+            raise HTTPException(status_code=400, detail="Username already taken")
         return crud.create_user(db=db, user=user)
-    
 
 
+# User Login Post Method
 @app.post("/user-login/", response_model=schemas.Token)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
                                 db: Session = Depends(get_db)):
@@ -172,6 +188,7 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     return {"access_token": access_token, "token_type": "bearer", "username": user.username}
 
 
+# 0Auth2 authorized user access
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -189,6 +206,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         raise credentials_exception
 
 
+# Only authorized user 
 @app.get("/users/auth")
 async def read_users(current_user: Annotated[dict, Depends(get_current_user)],
                     db: Annotated[Session, Depends(get_db)]):
@@ -197,37 +215,24 @@ async def read_users(current_user: Annotated[dict, Depends(get_current_user)],
     return (current_user)
 
 
-@app.delete("/users/{user_email}")
-async def delete_user(
-    user_email: EmailStr,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
-):
-    if current_user['email'] == user_email:
-        crud.delete_user(db=db, user_email=user_email)
-        return {"message": "User deleted successfully"}
-    else:
-        raise HTTPException(
-            status_code=403, detail="You don't have permission to access this resource"
-        )
-
-@app.put("/users/{username}")
+# Update username Post Method
+@app.put("/user-update/")
 async def update_user(
-    user_email: EmailStr,
-    username: str,
+    user_email: EmailStr = Form(...),
+    username: str = Form(...),
     db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
 ):
-    if current_user['email'] == user_email:
-        crud.update_user(db=db, user_email=user_email, username=username)
-        return {"message": "Username updated successfully"}
-    else:
+    db_user = crud.get_user(db, username=username)
+    if db_user:
         raise HTTPException(
-            status_code=403, detail="You don't have permission to access this resource"
+            status_code=400, detail='Username already exist!'
         )
+    crud.update_user(db=db, user_email=user_email, username=username)
+    return {"message": "Username updated successfully"}
+    
     
 
-#preproces uploaded image
+# Preprocess image uploaded for ml-model
 def preprocess_img(pet):
     img_array = pet.resize((224, 224)) 
     img_array = tf.keras.utils.img_to_array(img_array)
@@ -235,12 +240,13 @@ def preprocess_img(pet):
     return img_array / 255.0
 
 
-client = anthropic.Anthropic(api_key="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")
-
-
+# Upload image file to predict and display advice
 @app.post("/upload-image/")
 async def upload_image(file: UploadFile):
     contents = await file.read()
+    file_type = imghdr.what(None, h=contents)
+    if file_type not in ["jpeg", "jpg"]:
+        raise HTTPException(status_code=400, detail='Only JPEG/JPG images are allowed')
     pet = Image.open(io.BytesIO(contents))
 
     processed_image = preprocess_img(pet)

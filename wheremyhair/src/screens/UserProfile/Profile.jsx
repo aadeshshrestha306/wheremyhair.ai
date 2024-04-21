@@ -9,7 +9,8 @@ import {
     Dimensions,
     TouchableOpacity,
     Linking,
-    Modal
+    Modal,
+    Alert
 } from 'react-native';
 import Icon from "react-native-vector-icons/Ionicons";
 import { AuthContext } from "../../context/AuthContext";
@@ -19,7 +20,7 @@ const screenWidth = Dimensions.get('screen').width;
 const statusBarHeight = StatusBar.currentHeight || 0;
 
 const ProfileView = ( { navigation } ) => {
-    const {logOut, user } = useContext(AuthContext);
+    const {logOut, email, user } = useContext(AuthContext);
     const [ modalVisible, setModalVisible ] = useState(false);
 
     const openLinkedIn = () => {
@@ -50,9 +51,9 @@ const ProfileView = ( { navigation } ) => {
                 >
                     <View style={styles.modalContainer}>
                         <View style={styles.modalView}>
-                        <Text style={styles.font}>Are you sure you want to delete your account?</Text>
-                        <TouchableOpacity style={styles.textfield}>
-                            <Text style={styles.button_text}>Delete</Text>
+                        <Text style={styles.font}>Are you sure you want to log out?</Text>
+                        <TouchableOpacity style={styles.textfield} onPress={logOut}>
+                            <Text style={styles.button_text}>Log Out</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.textfield} onPress={() => setModalVisible(false)}>
                             <Text style={styles.button_text}>Cancel</Text>
@@ -91,17 +92,11 @@ const ProfileView = ( { navigation } ) => {
             </TouchableOpacity>
             <TouchableOpacity style={styles.box} onPress={openMail}>
                 <View style={styles.buttons}>
-                    <Icon name="chatbox-ellipses-outline" size={30} color={'white'} />
+                    <Icon name="mail-outline" size={30} color={'white'} />
                     <Text style={styles.button_text}>Contact Us</Text> 
                 </View>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.box} onPress={() => setModalVisible(true)}>
-                <View style={styles.buttons}>
-                    <Icon name="close-circle-outline" size={30} color={'white'} />
-                    <Text style={styles.button_text}>Delete Account</Text> 
-                </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={logOut} style={styles.box}>
+            <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.box}>
                 <View style={styles.buttons}>
                     <Icon name="exit-outline" size={30} color={'white'} />
                     <Text style={styles.button_text}>Log Out</Text> 
@@ -198,6 +193,8 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         marginTop: 20,
         marginLeft: 15,
+        fontSize: 19,
+        textAlign: 'center'
     },
 
     modalContainer: {
