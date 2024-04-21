@@ -13,10 +13,6 @@ import tensorflow as tf
 import random
 import string
 import imghdr
-
-import models, schemas, crud
-from database import SessionLocal, engine
-from dotenv import load_dotenv
 import os
 import io
 from PIL import Image
@@ -24,19 +20,13 @@ import tensorflow as tf
 import numpy as np
 import anthropic
 
+import models, schemas, crud
+from database import SessionLocal, engine
+from dotenv import load_dotenv
+
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1" 
 
-"""
-
-gpus = tf.config.list_physical_devices('GPU')
-if gpus:
-    try:
-        for gpu in gpus:
-            tf.config.experimental.set_virtual_device_configuration(gpu, [tf.config.experimental.VirtualDeviceConfiguration(memory_limit=1024)])
-        logical_gpus = tf.config.experimental.list_logical_devices('GPU')
-        print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
-    except RuntimeError as e:
-        print(e)"""
 
 load_dotenv('.env')
 

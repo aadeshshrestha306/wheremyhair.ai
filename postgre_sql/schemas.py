@@ -10,9 +10,6 @@ class UserCreate(UserBase):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
-
-class UserUpdate(BaseModel):
-    username: str
     
 class User(UserBase):
     id: int
@@ -28,4 +25,3 @@ class Token(BaseModel):
 class UserVerification(BaseModel):
     email: EmailStr
     verification_code : str
-

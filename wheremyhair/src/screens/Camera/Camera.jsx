@@ -1,14 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, ActivityIndicator, TouchableOpacity, SafeAreaView, Alert, PermissionsAndroid, Dimensions, Image, Text } from "react-native";
+import { View, StyleSheet, ActivityIndicator, TouchableOpacity, SafeAreaView, Alert, PermissionsAndroid, Image } from "react-native";
 import { Camera, useCameraDevice } from "react-native-vision-camera";
 import Icons from 'react-native-vector-icons/Ionicons';
-import { launchImageLibrary } from "react-native-image-picker";
 import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 
-import Results from "./Results";
 import axios from "axios";
 import { BASE_URL } from "../../../var";
-import EncryptedStorage from "react-native-encrypted-storage";
 
 const CameraScreen = ({ navigation }) => {
   const camera = useRef(null);
