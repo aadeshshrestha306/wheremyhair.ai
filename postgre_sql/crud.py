@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 import models, schemas
 import bcrypt
 from pydantic import EmailStr
+from datetime import datetime
 
 
 def hash_password(password: str) -> str:
@@ -16,7 +17,7 @@ def get_user_by_email(db: Session, email: str):
 
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = hash_password(user.password)
-    db_user = models.User(username=user.username, email=user.email, hashed_password=hashed_password)
+    db_user = models.User(username=user.username, email=user.email, hashed_password=hashed_password, usage='')
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

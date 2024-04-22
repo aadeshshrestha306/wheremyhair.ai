@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, Form, File
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 import bcrypt
@@ -19,11 +19,15 @@ from PIL import Image
 import tensorflow as tf
 import numpy as np
 import anthropic
-
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib
 import models, schemas, crud
 from database import SessionLocal, engine
 from dotenv import load_dotenv
 
+
+matplotlib.use('Agg')
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1" 
 
@@ -220,7 +224,8 @@ async def update_user(
     crud.update_user(db=db, user_email=user_email, username=username)
     return {"message": "Username updated successfully"}
     
-    
+
+dates = []
 
 # Preprocess image uploaded for ml-model
 def preprocess_img(pet):
@@ -231,10 +236,11 @@ def preprocess_img(pet):
 
 
 # Upload image file to predict and display advice
-@app.post("/upload-image/")
-async def upload_image(file: UploadFile):
+@app.post("/upload-image/{email}")
+async def upload_image(file: UploadFile, email:EmailStr, db:Session = Depends(get_db)):
     contents = await file.read()
     file_type = imghdr.what(None, h=contents)
+    print(file_type)
     if file_type not in ["jpeg", "jpg"]:
         raise HTTPException(status_code=400, detail='Only JPEG/JPG images are allowed')
     pet = Image.open(io.BytesIO(contents))
@@ -250,21 +256,21 @@ async def upload_image(file: UploadFile):
 
     confidence = prediction[0][predicted_class_index] * 100
 
-    prompt = f"3 advice on baldness level{prediction_label} in bullet points"
+    # prompt = f"3 advice on baldness level{prediction_label} in bullet points"
 
-    message = client.messages.create(
-        model='claude-3-opus-20240229',
-        max_tokens=1000,
-        temperature=0.0,
-        system="Respond only in Yoda-speak.",
-        messages=[
-            {'role':'user', 'content': prompt}
-        ]
-    )
+    # message = client.messages.create(
+    #     model='claude-3-opus-20240229',
+    #     max_tokens=1000,
+    #     temperature=0.0,
+    #     system="Respond only in Yoda-speak.",
+    #     messages=[
+    #         {'role':'user', 'content': prompt}
+    #     ]
+    # )
 
-    text = message.content
+    # text = message.content
 
-    advice = [block.text for block in text]
+    # advice = [block.text for block in text]
 
     if prediction_label == "type 2":
         description = """Type 2 baldness is the initial stage of male pattern baldness, characterized by a slightly receding hairline and minimal thinning at the crown. It is often the first sign of hair loss in men and may not be immediately noticeable to others."""
@@ -283,11 +289,41 @@ async def upload_image(file: UploadFile):
         
     elif prediction_label == "type 7":
         description = """Type 7 baldness is the most severe stage of male pattern baldness, characterized by complete baldness on the top of the head. There is no remaining hair on the top of the head, and individuals may choose to embrace their baldness or explore alternative options such as wigs or hairpieces."""
-        
+
+    dates.append(str(datetime.today().strftime('%Y-%m-%d')))
+    user = db.query(models.User).filter(models.User.email == email).first()
+    if user:
+        user.usage = dates
+        db.commit()
+
 
     return JSONResponse(content={"prediction": prediction_label,
                                  "confidence": confidence,
                                  "description": description,
-                                 "advice": advice,
+                                 "advice": "advice",
                                  })
-   
+
+
+@app.get("/usage/{email}")
+def get_usage(email: EmailStr, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.email == email).first()
+    if user:
+        usage_dates = pd.to_datetime(user.usage)
+        usage_dates_count = usage_dates.value_counts().sort_index()
+
+        plt.figure(figsize=(10, 6))
+        plt.plot(usage_dates_count.index, usage_dates_count.values, marker='o')
+        plt.xlabel('Date')
+        plt.ylabel('Number of Images Uploaded')
+        plt.grid(True)
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+
+        # Save the plot
+        plt.savefig('usage_plot.jpg')
+
+        plt.close()
+
+        return FileResponse('usage_plot.jpg', media_type='image/jpg')
+    else:
+        return HTTPException(status_code=404, detail='No data found')

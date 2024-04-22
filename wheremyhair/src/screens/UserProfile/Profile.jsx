@@ -75,7 +75,7 @@ const ProfileView = ( { navigation } ) => {
                         alignItems: 'center' 
                     }}
                 />
-                <Text style={styles.normal_text2}>Hi 🙏</Text>
+                <Text style={styles.normal_text2}>Well hello there 👋🙏</Text>
                 <Text style={styles.normal_text}>{user}</Text>
             </View>
             <TouchableOpacity style={styles.box} onPress={ () => navigation.navigate('UserInfo')}>

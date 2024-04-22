@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { View, StyleSheet, ActivityIndicator, TouchableOpacity, SafeAreaView, Alert, PermissionsAndroid, Image } from "react-native";
 import { Camera, useCameraDevice } from "react-native-vision-camera";
 import Icons from 'react-native-vector-icons/Ionicons';
@@ -6,9 +6,11 @@ import { CameraRoll } from "@react-native-camera-roll/camera-roll";
 
 import axios from "axios";
 import { BASE_URL } from "../../../var";
+import { AuthContext } from "../../context/AuthContext";
 
 const CameraScreen = ({ navigation }) => {
   const camera = useRef(null);
+  const {email} = useContext(AuthContext)
   const [showCamera, setShowCamera] = useState(true);
   const [imgSource, setImgSource] = useState("");
   const [cameraType, setCameraType] = useState('front')
@@ -75,7 +77,7 @@ const CameraScreen = ({ navigation }) => {
           name: "photo.jpg",
         });
 
-        const response = await axios.post(BASE_URL+"upload-image/",
+        const response = await axios.post(BASE_URL+"upload-image/"+email,
           formdata,
           {
             headers : {
