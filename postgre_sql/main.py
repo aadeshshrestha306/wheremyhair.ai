@@ -256,21 +256,21 @@ async def upload_image(file: UploadFile, email:EmailStr, db:Session = Depends(ge
 
     confidence = prediction[0][predicted_class_index] * 100
 
-    # prompt = f"3 advice on baldness level{prediction_label} in bullet points"
+    prompt = f"3 advice on baldness level{prediction_label} in bullet points"
 
-    # message = client.messages.create(
-    #     model='claude-3-opus-20240229',
-    #     max_tokens=1000,
-    #     temperature=0.0,
-    #     system="Respond only in Yoda-speak.",
-    #     messages=[
-    #         {'role':'user', 'content': prompt}
-    #     ]
-    # )
+    message = client.messages.create(
+        model='claude-3-opus-20240229',
+        max_tokens=1000,
+        temperature=0.0,
+        system="Respond only in Yoda-speak.",
+        messages=[
+            {'role':'user', 'content': prompt}
+        ]
+    )
 
-    # text = message.content
+    text = message.content
 
-    # advice = [block.text for block in text]
+    advice = [block.text for block in text]
 
     if prediction_label == "type 2":
         description = """Type 2 baldness is the initial stage of male pattern baldness, characterized by a slightly receding hairline and minimal thinning at the crown. It is often the first sign of hair loss in men and may not be immediately noticeable to others."""
@@ -300,7 +300,7 @@ async def upload_image(file: UploadFile, email:EmailStr, db:Session = Depends(ge
     return JSONResponse(content={"prediction": prediction_label,
                                  "confidence": confidence,
                                  "description": description,
-                                 "advice": "advice",
+                                 "advice": advice,
                                  })
 
 
