@@ -11,7 +11,7 @@ Install the React Native CLI globally using npm:
 
 Copy code
 
-'''bash
+'''console
     npm install -g react-native-cli'''
 
 2. Clone the Repository
@@ -19,14 +19,14 @@ Clone the project repository from GitHub:
 
 
 Copy code
-'''bash
+'''console
     git clone https://github.com/yourusername/your-repository.git'''
 
 3. Install Dependencies
 Navigate to the project directory and install the required npm packages:
 
 Copy code
-'''bash
+'''console
     cd your-repository
     npm install'''
 
@@ -35,20 +35,20 @@ Start the React Native development server:
 
 
 Copy code
-'''bash
+'''console
     npx react-native start'''
 
 In a separate terminal, run the app on an emulator or physical device:
 
 Copy code
-'''bash
+'''console
     npx react-native run-android
 '''
 
 or
 
 Copy code
-'''bash
+'''console
     npx react-native run-ios
 '''
 
