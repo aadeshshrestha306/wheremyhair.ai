@@ -1,6 +1,6 @@
-Final Year Project: Hair Loss Prediction and Analysis System
+Final Year Project: Hair Loss Prediction and Analysis System (wheremyhair.ai)
 Introduction
-The Hair Loss Prediction and Analysis System is a web application designed to predict and analyze male pattern baldness based on uploaded images. The system uses machine learning models to classify the level of baldness and provides advice based on the prediction. It also allows users to track their image upload history and visualize their usage over time.
+The Hair Loss Prediction and Analysis System is a mobile application designed to predict and analyze male pattern baldness based on uploaded images. The system uses machine learning models to classify the level of baldness and provides advice based on the prediction. It also allows users to track their image upload history and visualize their usage over time.
 
 Installation
 1. Install Python
