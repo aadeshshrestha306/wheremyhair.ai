@@ -35,9 +35,8 @@ uvicorn main:app --reload
 The backend server should now be running at http://localhost:8000.
 
 
-Usage
-Uploading Images
+Uploading Images :
 To upload an image for prediction, use the /upload-image/ endpoint with a POST request. Provide the image file as form data along with the email address of the user.
 
-Viewing Usage
+Viewing Usage :
 To view the image upload usage chart, use the /usage/ endpoint with a GET request. Provide the email address of the user as a path parameter.
